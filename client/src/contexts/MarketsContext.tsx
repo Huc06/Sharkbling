@@ -43,8 +43,8 @@ export const MarketsProvider = ({ children }: MarketsProviderProps) => {
   const createMarket = async (marketData: Omit<Market, "id" | "createdAt" | "yesPool" | "noPool" | "result">): Promise<Market | null> => {
     if (!isConnected) {
       toast({
-        title: "Wallet Not Connected",
-        description: "Please connect your wallet to create a prediction market.",
+        title: "Ví chưa được kết nối",
+        description: "Vui lòng kết nối ví của bạn để tạo thị trường dự đoán.",
         variant: "destructive",
       });
       return null;
@@ -53,12 +53,45 @@ export const MarketsProvider = ({ children }: MarketsProviderProps) => {
     try {
       setIsCreatingMarket(true);
       
+      // Step 1: Create transaction on blockchain
+      toast({
+        title: "Đang xử lý",
+        description: "Đang tạo thị trường dự đoán trên blockchain...",
+      });
+      
+      // Calculate end date as timestamp for blockchain
+      const endDateTimestamp = Math.floor(new Date(marketData.endDate).getTime() / 1000);
+      
+      // Execute transaction on Sui blockchain
+      try {
+        const txResult = await walletAdapter.createPredictionMarket(
+          marketData.title,
+          marketData.description,
+          marketData.initialPool,
+          endDateTimestamp,
+          marketData.marketFee
+        );
+        
+        if (!txResult) throw new Error("Blockchain transaction failed");
+        
+        console.log("Prediction market created on blockchain:", txResult);
+      } catch (blockchainError) {
+        console.error("Blockchain transaction failed:", blockchainError);
+        toast({
+          title: "Giao dịch blockchain thất bại",
+          description: "Không thể tạo thị trường dự đoán trên blockchain. Vui lòng thử lại.",
+          variant: "destructive",
+        });
+        throw blockchainError;
+      }
+      
+      // Step 2: Save to database
       const response = await apiRequest("POST", "/api/markets", marketData);
       const market = await response.json();
       
       toast({
-        title: "Market Created",
-        description: "Your prediction market has been created successfully.",
+        title: "Thị trường đã được tạo",
+        description: "Thị trường dự đoán của bạn đã được tạo thành công.",
       });
 
       // Invalidate markets query to refresh the list
@@ -68,8 +101,8 @@ export const MarketsProvider = ({ children }: MarketsProviderProps) => {
     } catch (error) {
       console.error("Failed to create market:", error);
       toast({
-        title: "Market Creation Failed",
-        description: "Could not create prediction market. Please try again.",
+        title: "Tạo thị trường thất bại",
+        description: "Không thể tạo thị trường dự đoán. Vui lòng thử lại.",
         variant: "destructive",
       });
       return null;
@@ -82,8 +115,8 @@ export const MarketsProvider = ({ children }: MarketsProviderProps) => {
   const placeBet = async (marketId: number, prediction: "yes" | "no", amount: number): Promise<Prediction | null> => {
     if (!isConnected || !walletAddress) {
       toast({
-        title: "Wallet Not Connected",
-        description: "Please connect your wallet to place a bet.",
+        title: "Ví chưa được kết nối",
+        description: "Vui lòng kết nối ví của bạn để đặt cược.",
         variant: "destructive",
       });
       return null;
@@ -111,7 +144,37 @@ export const MarketsProvider = ({ children }: MarketsProviderProps) => {
         odds = totalPool / market.noPool;
       }
       
-      // Create prediction
+      // Step 1: Execute blockchain transaction
+      toast({
+        title: "Đang xử lý",
+        description: "Đang đặt cược trên blockchain...",
+      });
+      
+      try {
+        // Convert marketId to string for blockchain (in real implementation, this would be the actual blockchain object ID)
+        const blockchainMarketId = market.id.toString();
+        
+        // Execute transaction on Sui blockchain
+        const txResult = await walletAdapter.placePrediction(
+          blockchainMarketId,
+          prediction,
+          amount
+        );
+        
+        if (!txResult) throw new Error("Blockchain transaction failed");
+        
+        console.log("Prediction placed on blockchain:", txResult);
+      } catch (blockchainError) {
+        console.error("Blockchain transaction failed:", blockchainError);
+        toast({
+          title: "Giao dịch blockchain thất bại",
+          description: "Không thể đặt cược trên blockchain. Vui lòng thử lại.",
+          variant: "destructive",
+        });
+        throw blockchainError;
+      }
+      
+      // Step 2: Save prediction to database
       const predictionData = {
         marketId,
         walletAddress,
@@ -124,8 +187,8 @@ export const MarketsProvider = ({ children }: MarketsProviderProps) => {
       const result = await response.json();
       
       toast({
-        title: "Bet Placed",
-        description: `You have successfully placed a bet of ${amount} SUI on "${prediction.toUpperCase()}"`,
+        title: "Đặt cược thành công",
+        description: `Bạn đã đặt cược thành công ${amount} SUI vào "${prediction === 'yes' ? 'CÓ' : 'KHÔNG'}"`,
       });
       
       // Invalidate market and predictions queries
@@ -137,8 +200,8 @@ export const MarketsProvider = ({ children }: MarketsProviderProps) => {
     } catch (error) {
       console.error("Failed to place bet:", error);
       toast({
-        title: "Bet Failed",
-        description: "Could not place your bet. Please try again.",
+        title: "Đặt cược thất bại",
+        description: "Không thể đặt cược của bạn. Vui lòng thử lại.",
         variant: "destructive",
       });
       return null;

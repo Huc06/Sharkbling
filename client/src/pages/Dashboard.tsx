@@ -8,6 +8,7 @@ import UserStats from "@/components/dashboard/UserStats";
 import ReputationNFTs from "@/components/dashboard/ReputationNFTs";
 import TopPredictors from "@/components/dashboard/TopPredictors";
 import CreateMarketBanner from "@/components/dashboard/CreateMarketBanner";
+import SuiWalletInfo from "@/components/wallet/SuiWalletInfo";
 
 const Dashboard = () => {
   return (
@@ -45,7 +46,12 @@ const Dashboard = () => {
               </div>
 
               {/* Side Section */}
-              <div>
+              <div className="space-y-6">
+                {/* Sui Wallet Info */}
+                <div className="mb-6">
+                  <SuiWalletInfo />
+                </div>
+                
                 {/* User Stats */}
                 <UserStats />
                 
