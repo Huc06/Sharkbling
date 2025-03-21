@@ -4,7 +4,7 @@ import { useMarkets } from "@/contexts/MarketsContext";
 import { Market } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast"; // Corrected import path
 
 
 interface BettingModalProps {
