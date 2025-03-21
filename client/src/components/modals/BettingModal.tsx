@@ -143,7 +143,7 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
             Cancel
           </Button>
           <Button 
-            className="bg-primary-500 hover:bg-primary-600"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md"
             onClick={handlePlaceBet}
             disabled={isPlacingBet || amount <= 0}
           >
