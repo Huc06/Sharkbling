@@ -112,13 +112,13 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
               <label className="block text-sm font-medium text-slate-700 mb-1">Your Prediction</label>
               <div className="grid grid-cols-2 gap-3">
                 <Button 
-                  className={selectedPrediction === "yes" ? "bg-primary-500" : "bg-slate-100 text-slate-800 hover:text-white"}
+                  className={selectedPrediction === "yes" ? "bg-violet-600 text-white hover:bg-violet-700" : "bg-slate-100 text-slate-800 hover:bg-violet-600 hover:text-white"}
                   onClick={() => setSelectedPrediction("yes")}
                 >
                   Yes
                 </Button>
                 <Button 
-                  className={selectedPrediction === "no" ? "bg-primary-500" : "bg-slate-100 text-slate-800 hover:text-white"}
+                  className={selectedPrediction === "no" ? "bg-violet-600 text-white hover:bg-violet-700" : "bg-slate-100 text-slate-800 hover:bg-violet-600 hover:text-white"}
                   onClick={() => setSelectedPrediction("no")}
                 >
                   No
