@@ -101,7 +101,7 @@ const Markets = () => {
               
               <Button 
                 className="bg-primary-500 hover:bg-primary-600 text-white"
-                onClick={() => isConnected ? setShowCreateModal(true) : setShowConnectModal(true)}
+                onClick={() => isConnected ? setShowCreateModal(true) : openConnectWalletModal()}
               >
                 <i className="fas fa-plus mr-2"></i>
                 Create New Market
@@ -307,7 +307,7 @@ const Markets = () => {
       )}
 
       {showConnectModal && (
-        <ConnectWalletModal onClose={() => setShowConnectModal(false)} />
+        <SuiWalletModal open={showConnectModal} onClose={() => setShowConnectModal(false)} />
       )}
     </div>
   );

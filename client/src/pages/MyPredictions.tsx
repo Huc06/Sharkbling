@@ -6,11 +6,11 @@ import MobileNavigation from "@/components/layout/MobileNavigation";
 import { Market, Prediction } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useWallet } from "@/contexts/WalletContext";
-import ConnectWalletModal from "@/components/modals/ConnectWalletModal";
+import { useSuiWallet } from "@/hooks/useSuiWallet";
+import SuiWalletModal from "@/components/modals/SuiWalletModal";
 
 const MyPredictions = () => {
-  const { walletAddress, isConnected } = useWallet();
+  const { walletAddress, isConnected, openConnectWalletModal } = useSuiWallet();
   const [showConnectModal, setShowConnectModal] = useState(false);
 
   // Fetch user's predictions
@@ -87,7 +87,7 @@ const MyPredictions = () => {
                 </p>
                 <Button 
                   className="bg-primary-500 hover:bg-primary-600"
-                  onClick={() => setShowConnectModal(true)}
+                  onClick={() => openConnectWalletModal()}
                 >
                   Connect Wallet
                 </Button>
@@ -98,7 +98,7 @@ const MyPredictions = () => {
         </main>
 
         {showConnectModal && (
-          <ConnectWalletModal onClose={() => setShowConnectModal(false)} />
+          <SuiWalletModal open={showConnectModal} onClose={() => setShowConnectModal(false)} />
         )}
       </div>
     );
