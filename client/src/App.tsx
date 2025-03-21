@@ -4,7 +4,6 @@ import Dashboard from "./pages/Dashboard";
 import Markets from "./pages/Markets";
 import MyPredictions from "./pages/MyPredictions";
 import NotFound from "./pages/not-found";
-import { WalletProvider } from "./contexts/WalletContext";
 import { MarketsProvider } from "./contexts/MarketsContext";
 
 function Router() {
@@ -20,12 +19,10 @@ function Router() {
 
 function App() {
   return (
-    <WalletProvider>
-      <MarketsProvider>
-        <Router />
-        <Toaster />
-      </MarketsProvider>
-    </WalletProvider>
+    <MarketsProvider>
+      <Router />
+      <Toaster />
+    </MarketsProvider>
   );
 }
 
