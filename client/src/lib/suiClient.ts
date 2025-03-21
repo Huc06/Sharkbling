@@ -6,6 +6,10 @@ import { TransactionBlock } from "@mysten/sui.js/transactions";
 const SUI_NETWORK = "testnet";
 const rpcUrl = `https://fullnode.${SUI_NETWORK}.sui.io`;
 
+export const getExplorerUrl = (txDigest: string) => {
+  return `https://suiexplorer.com/txblock/${txDigest}?network=${SUI_NETWORK}`;
+};
+
 // Connect to Sui blockchain
 export const connection = new Connection({
   fullnode: rpcUrl,

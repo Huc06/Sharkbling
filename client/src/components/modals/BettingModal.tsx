@@ -4,6 +4,8 @@ import { useMarkets } from "@/contexts/MarketsContext";
 import { Market } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+
 
 interface BettingModalProps {
   market: Market;
@@ -19,7 +21,7 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
   const totalPool = market.yesPool + market.noPool;
   const yesOdds = totalPool / market.yesPool;
   const noOdds = totalPool / market.noPool;
-  
+
   const calculatePayout = () => {
     if (amount <= 0) return 0;
     const odds = selectedPrediction === "yes" ? yesOdds : noOdds;
@@ -36,18 +38,40 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
     const end = new Date(endDate);
     const diffTime = end.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 1) return "1 day";
     return `${diffDays} days`;
   };
 
   const handlePlaceBet = async () => {
     if (amount <= 0) return;
-    
+
     const result = await placeBet(market.id, selectedPrediction, amount);
     if (result) {
+      const explorerUrl = getExplorerUrl(result.transactionDigest);
+      toast({
+        title: "Dự đoán thành công",
+        description: (
+          <div>
+            Dự đoán của bạn đã được ghi nhận
+            <a 
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="block mt-2 text-blue-600 hover:underline"
+            >
+              Xem giao dịch trên Sui Explorer
+            </a>
+          </div>
+        ),
+      });
       onClose();
     }
+  };
+
+  const getExplorerUrl = (transactionDigest: string) => {
+    // Replace with actual Sui Explorer URL construction
+    return `https://sui-explorer.com/tx/${transactionDigest}`; 
   };
 
   return (
@@ -56,13 +80,13 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
         <DialogHeader>
           <DialogTitle className="text-lg font-heading font-bold">Place Prediction</DialogTitle>
         </DialogHeader>
-        
+
         <div className="mb-6">
           <div className="mb-4">
             <h4 className="font-medium text-slate-800 mb-1">{market.title}</h4>
             <div className="text-sm text-slate-500">Market ends in {formatTimeLeft(market.endDate)}</div>
           </div>
-          
+
           <div className="flex items-center gap-4 mb-6">
             <div className={`flex-1 border ${selectedPrediction === "yes" ? "border-primary-200 bg-primary-50" : "border-slate-200"} rounded-lg p-3`}>
               <div className="text-center">
@@ -72,7 +96,7 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
                 </div>
               </div>
             </div>
-            
+
             <div className={`flex-1 border ${selectedPrediction === "no" ? "border-primary-200 bg-primary-50" : "border-slate-200"} rounded-lg p-3`}>
               <div className="text-center">
                 <div className="text-sm text-slate-600 mb-1">Current No Odds</div>
@@ -82,7 +106,7 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
               </div>
             </div>
           </div>
-          
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Your Prediction</label>
@@ -101,7 +125,7 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
                 </Button>
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Amount (SUI)</label>
               <div className="relative">
@@ -121,7 +145,7 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
                 </button>
               </div>
             </div>
-            
+
             <div className="bg-slate-50 rounded-lg p-3">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-slate-600">Potential Payout:</span>
@@ -134,7 +158,7 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
             </div>
           </div>
         </div>
-        
+
         <div className="flex items-center justify-end gap-3">
           <Button 
             variant="outline" 
