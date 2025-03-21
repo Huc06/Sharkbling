@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Market } from "@shared/schema";
 import { useMarkets } from "@/contexts/MarketsContext";
 import BettingModal from "../modals/BettingModal";
-import { useWallet } from "@/contexts/WalletContext";
-import ConnectWalletModal from "../modals/ConnectWalletModal";
+import { useSuiWallet } from "@/hooks/useSuiWallet";
+import SuiWalletModal from "../modals/SuiWalletModal";
 
 const FeaturedMarkets = () => {
   const { data: markets, isLoading } = useQuery<Market[]>({
@@ -15,12 +15,12 @@ const FeaturedMarkets = () => {
   const [showBettingModal, setShowBettingModal] = useState(false);
   const [selectedBetMarket, setSelectedBetMarket] = useState<Market | null>(null);
   const [selectedBetType, setSelectedBetType] = useState<"yes" | "no">("yes");
-  const { isConnected } = useWallet();
+  const { isConnected, openConnectWalletModal } = useSuiWallet();
   const [showConnectModal, setShowConnectModal] = useState(false);
 
   const handlePlaceBet = (market: Market, betType: "yes" | "no") => {
     if (!isConnected) {
-      setShowConnectModal(true);
+      openConnectWalletModal();
       return;
     }
     
