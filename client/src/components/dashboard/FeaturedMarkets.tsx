@@ -182,7 +182,7 @@ const FeaturedMarkets = () => {
       )}
 
       {showConnectModal && (
-        <ConnectWalletModal onClose={() => setShowConnectModal(false)} />
+        <SuiWalletModal open={showConnectModal} onClose={() => setShowConnectModal(false)} />
       )}
     </>
   );

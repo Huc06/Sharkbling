@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SocialTrend } from "@shared/schema";
 import CreateMarketModal from "../modals/CreateMarketModal";
-import { useWallet } from "@/contexts/WalletContext";
-import ConnectWalletModal from "../modals/ConnectWalletModal";
+import { useSuiWallet } from "@/hooks/useSuiWallet";
+import SuiWalletModal from "../modals/SuiWalletModal";
 
 const SocialTrends = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<string>("All Platforms");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTrend, setSelectedTrend] = useState<SocialTrend | null>(null);
-  const { isConnected } = useWallet();
+  const { isConnected, openConnectWalletModal } = useSuiWallet();
   const [showConnectModal, setShowConnectModal] = useState(false);
 
   const { data: trends, isLoading } = useQuery<SocialTrend[]>({
@@ -22,7 +22,7 @@ const SocialTrends = () => {
 
   const handleCreateMarketFromTrend = (trend: SocialTrend) => {
     if (!isConnected) {
-      setShowConnectModal(true);
+      openConnectWalletModal();
       return;
     }
     
@@ -219,7 +219,7 @@ const SocialTrends = () => {
       )}
 
       {showConnectModal && (
-        <ConnectWalletModal onClose={() => setShowConnectModal(false)} />
+        <SuiWalletModal open={showConnectModal} onClose={() => setShowConnectModal(false)} />
       )}
     </>
   );

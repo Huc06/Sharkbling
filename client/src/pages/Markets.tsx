@@ -15,8 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import CreateMarketModal from "@/components/modals/CreateMarketModal";
 import BettingModal from "@/components/modals/BettingModal";
-import { useWallet } from "@/contexts/WalletContext";
-import ConnectWalletModal from "@/components/modals/ConnectWalletModal";
+import { useSuiWallet } from "@/hooks/useSuiWallet";
+import SuiWalletModal from "@/components/modals/SuiWalletModal";
 
 const Markets = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<string>("All");
@@ -26,7 +26,7 @@ const Markets = () => {
   const [showBettingModal, setShowBettingModal] = useState(false);
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [selectedBetType, setSelectedBetType] = useState<"yes" | "no">("yes");
-  const { isConnected } = useWallet();
+  const { isConnected, openConnectWalletModal } = useSuiWallet();
   const [showConnectModal, setShowConnectModal] = useState(false);
 
   const { data: markets, isLoading } = useQuery<Market[]>({
@@ -43,7 +43,7 @@ const Markets = () => {
 
   const handlePlaceBet = (market: Market, betType: "yes" | "no") => {
     if (!isConnected) {
-      setShowConnectModal(true);
+      openConnectWalletModal();
       return;
     }
     
