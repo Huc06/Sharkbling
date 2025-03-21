@@ -3,7 +3,8 @@ import { Market, Prediction } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useWallet } from "./WalletContext";
+import { useSuiWallet } from "@/hooks/useSuiWallet";
+import { useWalletAdapter } from "@/lib/WalletAdapter";
 
 interface MarketContextType {
   createMarket: (marketData: Omit<Market, "id" | "createdAt" | "yesPool" | "noPool" | "result">) => Promise<Market | null>;
@@ -35,7 +36,8 @@ export const MarketsProvider = ({ children }: MarketsProviderProps) => {
   const [isPlacingBet, setIsPlacingBet] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { walletAddress, isConnected } = useWallet();
+  const { walletAddress, isConnected } = useSuiWallet();
+  const walletAdapter = useWalletAdapter();
 
   // Create a new prediction market
   const createMarket = async (marketData: Omit<Market, "id" | "createdAt" | "yesPool" | "noPool" | "result">): Promise<Market | null> => {

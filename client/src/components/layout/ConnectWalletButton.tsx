@@ -1,10 +1,14 @@
 import { ConnectButton } from '@mysten/dapp-kit';
 import { Button } from "@/components/ui/button";
+import { useSuiWallet } from "@/hooks/useSuiWallet";
 
 const ConnectWalletButton = () => {
+  // Use our custom hook to get wallet state and register user
+  useSuiWallet();
+  
   return (
     <ConnectButton>
-      {(props) => {
+      {(props: any) => {
         const { connected, connecting, connect, disconnect, walletName } = props;
         return connected ? (
           <Button 
