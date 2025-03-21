@@ -1,16 +1,17 @@
+
 import { useState } from "react";
 import CreateMarketModal from "../modals/CreateMarketModal";
-import { useWallet } from "@/contexts/WalletContext";
+import { useSuiWallet } from "@/hooks/useSuiWallet"; 
 import ConnectWalletModal from "../modals/ConnectWalletModal";
 
 const CreateMarketBanner = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const { isConnected } = useWallet();
+  const { isConnected, openConnectWalletModal } = useSuiWallet();
   const [showConnectModal, setShowConnectModal] = useState(false);
 
   const handleCreateMarketClick = () => {
     if (!isConnected) {
-      setShowConnectModal(true);
+      openConnectWalletModal();
       return;
     }
     setShowCreateModal(true);
@@ -33,13 +34,8 @@ const CreateMarketBanner = () => {
         </div>
       </div>
 
-      {/* Modals */}
       {showCreateModal && (
         <CreateMarketModal onClose={() => setShowCreateModal(false)} />
-      )}
-
-      {showConnectModal && (
-        <ConnectWalletModal onClose={() => setShowConnectModal(false)} />
       )}
     </>
   );
