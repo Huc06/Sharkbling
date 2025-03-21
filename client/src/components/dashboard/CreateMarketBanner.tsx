@@ -19,14 +19,14 @@ const CreateMarketBanner = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-r from-primary-500 to-accent-500 rounded-xl shadow-sm overflow-hidden mb-8">
+      <div className="bg-gradient-to-r from-primary to-accent rounded-xl shadow-sm overflow-hidden mb-8">
         <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="text-white">
+          <div className="text-primary-foreground">
             <h2 className="text-xl font-heading font-bold mb-2">Create Your Own Prediction Market</h2>
-            <p className="text-white text-opacity-80">Launch a new market based on any social media metric or event.</p>
+            <p className="text-primary-foreground/80">Launch a new market based on any social media metric or event.</p>
           </div>
           <button 
-            className="bg-white text-primary-600 py-3 px-6 rounded-lg text-sm font-medium shadow-sm hover:shadow whitespace-nowrap" 
+            className="bg-background text-primary py-3 px-6 rounded-lg text-sm font-medium shadow-sm hover:shadow whitespace-nowrap" 
             onClick={handleCreateMarketClick}
           >
             Create Market
