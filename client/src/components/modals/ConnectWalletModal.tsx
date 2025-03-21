@@ -17,11 +17,11 @@ const ConnectWalletModal = ({ onClose }: ConnectWalletModalProps) => {
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-lg font-heading font-bold">Connect Wallet</DialogTitle>
+          <DialogTitle className="text-lg font-heading font-bold">Kết nối ví</DialogTitle>
         </DialogHeader>
         
         <div className="py-4">
-          <p className="text-slate-600 text-sm mb-4">Connect your Sui wallet to participate in prediction markets.</p>
+          <p className="text-slate-600 text-sm mb-4">Kết nối ví Sui của bạn để tham gia vào thị trường dự đoán.</p>
           
           <div className="space-y-3 mb-6">
             <button 
@@ -65,7 +65,7 @@ const ConnectWalletModal = ({ onClose }: ConnectWalletModalProps) => {
           </div>
           
           <div className="text-xs text-slate-500 text-center">
-            By connecting, you agree to our <a href="#" className="text-primary-500">Terms of Service</a> and <a href="#" className="text-primary-500">Privacy Policy</a>.
+            Bằng cách kết nối, bạn đồng ý với <a href="#" className="text-primary-500">Điều khoản dịch vụ</a> và <a href="#" className="text-primary-500">Chính sách bảo mật</a> của chúng tôi.
           </div>
         </div>
       </DialogContent>

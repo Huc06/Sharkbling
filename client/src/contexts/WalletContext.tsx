@@ -41,46 +41,34 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
     try {
       setIsConnecting(true);
       
-      // Check if Sui wallet is available
-      if (!(window as any).suiWallet) {
-        toast({
-          title: "Wallet Not Found",
-          description: "Please install the Sui Wallet extension",
-          variant: "destructive",
-        });
-        return;
-      }
+      // Trong môi trường phát triển, luôn giả lập kết nối ví thành công
+      // Không kiểm tra window.suiWallet vì chúng ta đang sử dụng dữ liệu giả lập
       
-      // Request connection
-      // This is a simplified version - in real app, use @mysten/sui.js wallet adapter
-      const wallet = (window as any).suiWallet;
-      
-      // Mock wallet connection for development
-      // In production, this would use actual Sui wallet API
-      const mockAddress = `0x${Math.random().toString(16).substring(2, 10)}...${Math.random().toString(16).substring(2, 6)}`;
+      // Tạo địa chỉ ví giả lập - địa chỉ cố định để tránh lỗi khi làm mới trang
+      const mockAddress = "0x7def9ac8b0f44c565b3218e304a59df28d56f8a2";
       
       setWalletAddress(mockAddress);
       localStorage.setItem("walletAddress", mockAddress);
       
-      // Register user in the backend
+      // Đăng ký người dùng trong backend
       if (mockAddress) {
         try {
           await apiRequest("POST", "/api/users", { walletAddress: mockAddress });
         } catch (error) {
-          // User might already exist, which is fine
+          // Người dùng có thể đã tồn tại, điều này không sao
           console.log("User registration error:", error);
         }
       }
       
       toast({
-        title: "Wallet Connected",
-        description: "Your Sui wallet has been connected successfully.",
+        title: "Ví đã kết nối",
+        description: "Ví Sui của bạn đã được kết nối thành công.",
       });
     } catch (error) {
-      console.error("Failed to connect wallet:", error);
+      console.error("Lỗi kết nối ví:", error);
       toast({
-        title: "Connection Failed",
-        description: "Could not connect to your wallet. Please try again.",
+        title: "Kết nối thất bại",
+        description: "Không thể kết nối với ví của bạn. Vui lòng thử lại.",
         variant: "destructive",
       });
     } finally {
@@ -92,8 +80,8 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
     setWalletAddress(null);
     localStorage.removeItem("walletAddress");
     toast({
-      title: "Wallet Disconnected",
-      description: "Your wallet has been disconnected.",
+      title: "Ví đã ngắt kết nối",
+      description: "Ví của bạn đã được ngắt kết nối.",
     });
   };
 
