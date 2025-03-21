@@ -1,5 +1,7 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ConnectButton } from '@mysten/dapp-kit';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useSuiWallet } from "@/hooks/useSuiWallet";
+import { Wallet } from "lucide-react";
 
 interface SuiWalletModalProps {
   open: boolean;
@@ -7,22 +9,36 @@ interface SuiWalletModalProps {
 }
 
 const SuiWalletModal = ({ open, onClose }: SuiWalletModalProps) => {
+  const { connectWallet } = useSuiWallet();
+
+  const handleConnect = async () => {
+    try {
+      await connectWallet();
+      onClose();
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-lg font-heading font-bold">Kết nối ví</DialogTitle>
+          <DialogTitle className="text-center text-2xl font-bold">Kết nối ví Sui</DialogTitle>
+          <DialogDescription className="text-center">
+            Chọn phương thức kết nối ví của bạn để tham gia dự đoán và kiếm phần thưởng.
+          </DialogDescription>
         </DialogHeader>
-        
-        <div className="py-4">
-          <p className="text-slate-600 text-sm mb-4">Kết nối ví Sui của bạn để tham gia vào thị trường dự đoán.</p>
+        <div className="grid gap-4 py-4">
+          {/* Sui Wallet */}
+          <Button onClick={handleConnect} className="flex items-center justify-center space-x-2">
+            <Wallet className="w-5 h-5 mr-2" />
+            <span>Kết nối với Sui Wallet</span>
+          </Button>
           
-          <div className="space-y-3 mb-6">
-            <ConnectButton />
-          </div>
-          
-          <div className="text-xs text-slate-500 text-center mt-4">
-            Bằng cách kết nối, bạn đồng ý với <a href="#" className="text-primary-500">Điều khoản dịch vụ</a> và <a href="#" className="text-primary-500">Chính sách bảo mật</a> của chúng tôi.
+          {/* Additional wallet options can be added here */}
+          <div className="text-xs text-center text-slate-500 mt-4">
+            Bằng cách kết nối, bạn đồng ý với các điều khoản và điều kiện sử dụng của ứng dụng.
           </div>
         </div>
       </DialogContent>

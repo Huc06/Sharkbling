@@ -1,43 +1,63 @@
-import { useCurrentAccount } from '@mysten/dapp-kit';
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "./use-toast";
-import { useEffect } from 'react';
+import { useCurrentAccount, useConnectWallet, useDisconnectWallet } from '@mysten/dapp-kit';
+import { useWalletAdapter } from '@/lib/WalletAdapter';
+import { useCallback, useState } from 'react';
 
 export function useSuiWallet() {
   const currentAccount = useCurrentAccount();
-  const { toast } = useToast();
-  const walletAddress = currentAccount?.address || null;
-  const isConnected = !!currentAccount;
+  const connectWallet = useConnectWallet();
+  const disconnectWallet = useDisconnectWallet();
+  const [modalOpen, setModalOpen] = useState(false);
+  
+  // Get additional wallet functionality from our adapter
+  const walletAdapter = useWalletAdapter();
 
-  // Register user in backend when wallet is connected
-  useEffect(() => {
-    if (walletAddress) {
-      registerUser(walletAddress);
-    }
-  }, [walletAddress]);
+  const openConnectWalletModal = useCallback(() => {
+    setModalOpen(true);
+  }, []);
 
-  const registerUser = async (address: string) => {
+  const closeConnectWalletModal = useCallback(() => {
+    setModalOpen(false);
+  }, []);
+
+  const handleConnectWallet = useCallback(async () => {
     try {
-      await apiRequest("POST", "/api/users", { walletAddress: address });
+      // For dapp-kit, we don't need to provide specific wallet info as it's handled by the UI
+      // The ConnectButton component handles wallet selection
+      console.log('Wallet connection triggered via hook');
+      return true;
     } catch (error) {
-      // User may already exist, this is fine
-      console.log("User registration error:", error);
+      console.error('Failed to connect wallet:', error);
+      return false;
     }
-  };
+  }, []);
 
-  // Display toast notification when wallet connects/disconnects
-  useEffect(() => {
-    if (isConnected) {
-      toast({
-        title: "Ví đã kết nối",
-        description: "Ví Sui của bạn đã được kết nối thành công.",
-      });
+  const handleDisconnectWallet = useCallback(() => {
+    try {
+      disconnectWallet.mutate();
+      return true;
+    } catch (error) {
+      console.error('Failed to disconnect wallet:', error);
+      return false;
     }
-  }, [isConnected]);
+  }, [disconnectWallet]);
+
+  // Get adapter information but don't overwrite our values
+  const { 
+    walletAddress: adapterWalletAddress, 
+    isConnected: adapterIsConnected,
+    ...adapterRest 
+  } = walletAdapter;
 
   return {
-    walletAddress,
-    isConnected,
-    currentAccount
+    walletAddress: currentAccount?.address || null,
+    isConnected: !!currentAccount,
+    isConnecting: connectWallet.isPending,
+    connectWallet: handleConnectWallet,
+    disconnectWallet: handleDisconnectWallet,
+    modalOpen,
+    openConnectWalletModal,
+    closeConnectWalletModal,
+    currentAccount,
+    ...adapterRest
   };
 }

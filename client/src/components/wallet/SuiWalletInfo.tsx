@@ -40,7 +40,7 @@ export const SuiWalletInfo = () => {
 
         <div>
           <p className="text-sm font-medium text-slate-600 mb-1">Trạng thái</p>
-          <Badge variant="success">Đã kết nối</Badge>
+          <Badge variant="outline" className="text-green-600 bg-green-50 hover:bg-green-100 border-green-200">Đã kết nối</Badge>
         </div>
       </CardContent>
     </Card>
