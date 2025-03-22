@@ -1,11 +1,11 @@
 
 module prediction_market::prediction_market {
-    use sui::object::{Self, UID};
+    use sui::object::{Self, ID, UID};
     use sui::transfer;
     use sui::tx_context::{Self, TxContext};
     use sui::coin::{Self, Coin};
-    use sui::sui::SUI;
     use sui::balance::{Self, Balance};
+    use sui::sui::SUI;
     use sui::event;
 
     /// Custom errors
@@ -16,120 +16,123 @@ module prediction_market::prediction_market {
     const EMarketAlreadyResolved: u64 = 4;
     const EInvalidOwner: u64 = 5;
     const EAlreadyClaimed: u64 = 6;
-    const EInvalidPrediction: u64 = 7;
 
     struct PredictionMarket has key {
         id: UID,
+        owner: address,
         title: vector<u8>,
         description: vector<u8>,
+        start_time: u64,
         end_time: u64,
-        market_fee: u64,
         yes_pool: Balance<SUI>,
         no_pool: Balance<SUI>,
         is_resolved: bool,
-        result: bool, // true for yes, false for no
-        owner: address
+        result: bool,
+        fee_percentage: u64,
     }
 
     struct Prediction has key {
         id: UID,
         market_id: address,
-        user: address,
-        amount: u64,
         is_yes: bool,
-        claimed: bool
+        amount: u64,
+        claimed: bool,
     }
 
     // Events
     struct MarketCreated has copy, drop {
-        market_id: address,
-        title: vector<u8>,
-        end_time: u64
-    }
-
-    struct PredictionPlaced has copy, drop {
-        market_id: address,
-        user: address,
-        amount: u64,
-        is_yes: bool
-    }
-
-    struct MarketResolved has copy, drop {
-        market_id: address,
-        result: bool
-    }
-
-    public fun create_market(
+        market_id: ID,
         title: vector<u8>,
         description: vector<u8>,
         end_time: u64,
-        market_fee: u64,
+    }
+
+    struct PredictionPlaced has copy, drop {
+        prediction_id: ID,
+        market_id: ID,
+        is_yes: bool,
+        amount: u64,
+    }
+
+    struct MarketResolved has copy, drop {
+        market_id: ID,
+        result: bool,
+    }
+
+    public entry fun create_market(
+        title: vector<u8>,
+        description: vector<u8>,
+        end_time: u64,
+        fee_percentage: u64,
         initial_balance: Coin<SUI>,
         ctx: &mut TxContext
     ) {
         let market = PredictionMarket {
             id: object::new(ctx),
+            owner: tx_context::sender(ctx),
             title,
             description,
+            start_time: tx_context::epoch(ctx),
             end_time,
-            market_fee,
             yes_pool: balance::zero(),
             no_pool: balance::zero(),
             is_resolved: false,
             result: false,
-            owner: tx_context::sender(ctx)
+            fee_percentage,
         };
 
         // Add initial liquidity
         let initial_bal = coin::into_balance(initial_balance);
-        balance::join(&mut market.yes_pool, balance::split(&mut initial_bal, balance::value(&initial_bal) / 2));
+        let half_amount = balance::value(&initial_bal) / 2;
+        let split_balance = balance::split(&mut initial_bal, half_amount);
+        balance::join(&mut market.yes_pool, split_balance);
         balance::join(&mut market.no_pool, initial_bal);
 
         event::emit(MarketCreated {
-            market_id: object::uid_to_address(&market.id),
-            title: title,
-            end_time: end_time
+            market_id: object::uid_to_inner(&market.id),
+            title: market.title,
+            description: market.description,
+            end_time: market.end_time,
         });
 
         transfer::share_object(market);
     }
 
-    public fun place_prediction(
+    public entry fun place_prediction(
         market: &mut PredictionMarket,
-        payment: Coin<SUI>,
+        prediction_coin: Coin<SUI>,
         is_yes: bool,
         ctx: &mut TxContext
     ) {
-        assert!(!market.is_resolved, EMarketNotActive);
         assert!(tx_context::epoch(ctx) < market.end_time, EMarketEnded);
 
-        let amount = coin::value(&payment);
         let prediction = Prediction {
             id: object::new(ctx),
             market_id: object::uid_to_address(&market.id),
-            user: tx_context::sender(ctx),
-            amount,
             is_yes,
-            claimed: false
+            amount: coin::value(&prediction_coin),
+            claimed: false,
         };
+
+        let prediction_balance = coin::into_balance(prediction_coin);
 
         if (is_yes) {
-            balance::join(&mut market.yes_pool, coin::into_balance(payment));
+            balance::join(&mut market.yes_pool, prediction_balance);
         } else {
-            balance::join(&mut market.no_pool, coin::into_balance(payment));
-        };
+            balance::join(&mut market.no_pool, prediction_balance);
+        }
 
         event::emit(PredictionPlaced {
-            market_id: object::uid_to_address(&market.id),
-            user: tx_context::sender(ctx),
-            amount,
-            is_yes
+            prediction_id: object::uid_to_inner(&prediction.id),
+            market_id: object::uid_to_inner(&market.id),
+            is_yes: prediction.is_yes,
+            amount: prediction.amount,
         });
 
         transfer::transfer(prediction, tx_context::sender(ctx));
     }
 
-    public fun resolve_market(
+    public entry fun resolve_market(
         market: &mut PredictionMarket,
         result: bool,
         ctx: &mut TxContext
@@ -142,7 +145,7 @@ module prediction_market::prediction_market {
         market.result = result;
 
         event::emit(MarketResolved {
-            market_id: object::uid_to_address(&market.id),
+            market_id: object::uid_to_inner(&market.id),
             result
         });
     }
@@ -157,23 +160,24 @@ module prediction_market::prediction_market {
         assert!(prediction.market_id == object::uid_to_address(&market.id), 0);
         
         let winning_amount = if (prediction.is_yes == market.result) {
-            // Calculate winnings based on pool sizes and original bet
             let total_pool = balance::value(&market.yes_pool) + balance::value(&market.no_pool);
-            let win_amount = (prediction.amount * total_pool) / 
-                           (if (market.result) balance::value(&market.yes_pool) 
-                            else balance::value(&market.no_pool));
-            win_amount
+            let fee_amount = (total_pool * market.fee_percentage) / 100;
+            let winning_pool = total_pool - fee_amount;
+            (winning_pool * prediction.amount) / (if (market.result) {
+                balance::value(&market.yes_pool)
+            } else {
+                balance::value(&market.no_pool)
+            })
         } else {
             0
         };
 
         prediction.claimed = true;
 
-        if (winning_amount > 0) {
-            let pool = if (market.result) &mut market.yes_pool else &mut market.no_pool;
-            coin::from_balance(balance::split(pool, winning_amount), ctx)
+        if (prediction.is_yes) {
+            coin::from_balance(balance::split(&mut market.yes_pool, winning_amount), ctx)
         } else {
-            coin::zero(ctx)
+            coin::from_balance(balance::split(&mut market.no_pool, winning_amount), ctx)
         }
     }
 }
