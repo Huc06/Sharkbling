@@ -10,10 +10,13 @@ module prediction_market::prediction_market {
 
     /// Custom errors
     const EMarketNotActive: u64 = 0;
-    const EInvalidPrediction: u64 = 1;
-    const EInsufficientFunds: u64 = 2;
-    const EMarketEnded: u64 = 3;
-    const EMarketNotResolved: u64 = 4;
+    const EMarketEnded: u64 = 1;
+    const EMarketNotResolved: u64 = 2;
+    const EMarketNotEnded: u64 = 3;
+    const EMarketAlreadyResolved: u64 = 4;
+    const EInvalidOwner: u64 = 5;
+    const EAlreadyClaimed: u64 = 6;
+    const EInvalidPrediction: u64 = 7;
 
     struct PredictionMarket has key {
         id: UID,
@@ -131,7 +134,7 @@ module prediction_market::prediction_market {
         result: bool,
         ctx: &mut TxContext
     ) {
-        assert!(tx_context::sender(ctx) == market.owner, 0);
+        assert!(tx_context::sender(ctx) == market.owner, EInvalidOwner);
         assert!(tx_context::epoch(ctx) >= market.end_time, EMarketNotEnded);
         assert!(!market.is_resolved, EMarketAlreadyResolved);
 
@@ -150,7 +153,7 @@ module prediction_market::prediction_market {
         ctx: &mut TxContext
     ): Coin<SUI> {
         assert!(market.is_resolved, EMarketNotResolved);
-        assert!(!prediction.claimed, 0);
+        assert!(!prediction.claimed, EAlreadyClaimed);
         assert!(prediction.market_id == object::uid_to_address(&market.id), 0);
         
         let winning_amount = if (prediction.is_yes == market.result) {
