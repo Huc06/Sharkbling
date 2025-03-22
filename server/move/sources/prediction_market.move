@@ -1,4 +1,3 @@
-
 module prediction_market::prediction_market {
     use sui::object::{Self, ID, UID};
     use sui::transfer;
@@ -9,7 +8,6 @@ module prediction_market::prediction_market {
     use sui::event;
 
     /// Custom errors
-    const EMarketNotActive: u64 = 0;
     const EMarketEnded: u64 = 1;
     const EMarketNotResolved: u64 = 2;
     const EMarketNotEnded: u64 = 3;
@@ -120,16 +118,16 @@ module prediction_market::prediction_market {
             balance::join(&mut market.yes_pool, prediction_balance);
         } else {
             balance::join(&mut market.no_pool, prediction_balance);
-        }
+        };
 
         event::emit(PredictionPlaced {
             prediction_id: object::uid_to_inner(&prediction.id),
             market_id: object::uid_to_inner(&market.id),
             is_yes: prediction.is_yes,
-            amount: prediction.amount,
+            amount: prediction.amount
         });
 
-        transfer::transfer(prediction, tx_context::sender(ctx));
+        transfer::transfer(prediction, tx_context::sender(ctx))
     }
 
     public entry fun resolve_market(
