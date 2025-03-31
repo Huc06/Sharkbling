@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --vegas-red: #fc4040;
+  --vegas-black: #000000;
+  --vegas-green: #1B4D3E;
+  --vegas-gold: #FFD700;
+  --white:#ffffff;
+  --vegas-redoverlay: #D33535  ; 
+}
+.theme-vegas {
+  @apply bg-gradient-to-br from-[#fc4040] via-black to-[#1B4D3E];
+}
+
+.theme-red-overlay{
+  background-color:  var(--vegas-redoverlay);
+}
 @layer base {
   * {
     @apply border-border;
@@ -9,5 +24,8 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+  }
+  .vegas-theme {
+    @apply bg-gradient-to-r from(var(--vegas-red)) via(var(--vegas-black)) to(var(--vegas-green)); 
   }
 }

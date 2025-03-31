@@ -7,7 +7,7 @@ const TopBar = () => {
 
   return (
     <>
-      <header className="bg-white border-b border-slate-200 fixed top-0 right-0 left-0 lg:left-64 z-10">
+      <header className="bg-white border-b border-slate-200 fixed top-0 right-0 left-0 lg:left-64 z-10 theme-red-overlay">
         <div className="px-4 py-3 sm:px-6 flex items-center justify-between">
           <div className="lg:hidden flex items-center gap-3">
             <div className="bg-primary-500 text-white w-8 h-8 rounded-lg flex items-center justify-center">
