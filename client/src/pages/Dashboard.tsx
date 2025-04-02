@@ -1,4 +1,3 @@
-import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import MobileNavigation from "@/components/layout/MobileNavigation";
 import StatsSummary from "@/components/dashboard/StatsSummary";
@@ -14,10 +13,9 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col min-h-screen lg:flex-row">
       {/* Sidebar (desktop only) */}
-      <Sidebar />
 
       {/* Main content */}
-      <main className="flex-1 lg:ml-64">
+      <main className="flex-1">
         {/* TopBar */}
         <TopBar />
 

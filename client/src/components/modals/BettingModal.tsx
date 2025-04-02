@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useMarkets } from "@/contexts/MarketsContext";
 import { Market } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/hooks/use-toast"; // Corrected import path
-
+import { toast } from "@/hooks/use-toast";
 
 interface BettingModalProps {
   market: Market;
@@ -13,8 +17,14 @@ interface BettingModalProps {
   onClose: () => void;
 }
 
-const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) => {
-  const [selectedPrediction, setSelectedPrediction] = useState<"yes" | "no">(initialBetType);
+const BettingModal = ({
+  market,
+  initialBetType,
+  onClose,
+}: BettingModalProps) => {
+  const [selectedPrediction, setSelectedPrediction] = useState<"yes" | "no">(
+    initialBetType
+  );
   const [amount, setAmount] = useState<number>(0);
   const { placeBet, isPlacingBet } = useMarkets();
 
@@ -22,152 +32,108 @@ const BettingModal = ({ market, initialBetType, onClose }: BettingModalProps) =>
   const yesOdds = totalPool / market.yesPool;
   const noOdds = totalPool / market.noPool;
 
-  const calculatePayout = () => {
-    if (amount <= 0) return 0;
-    const odds = selectedPrediction === "yes" ? yesOdds : noOdds;
-    return amount * odds;
-  };
-
-  const calculateFee = () => {
-    const payout = calculatePayout();
-    return payout * (market.marketFee / 100);
-  };
-
-  const formatTimeLeft = (endDate: Date) => {
-    const now = new Date();
-    const end = new Date(endDate);
-    const diffTime = end.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 1) return "1 day";
-    return `${diffDays} days`;
-  };
+  const calculatePayout = () =>
+    amount > 0 ? amount * (selectedPrediction === "yes" ? yesOdds : noOdds) : 0;
+  const calculateFee = () => calculatePayout() * (market.marketFee / 100);
 
   const handlePlaceBet = async () => {
     if (amount <= 0) return;
-
     const result = await placeBet(market.id, selectedPrediction, amount);
     if (result) {
-      const explorerUrl = getExplorerUrl(result.transactionDigest);
       toast({
         title: "Dự đoán thành công",
         description: (
-          <div>
-            Dự đoán của bạn đã được ghi nhận
-            <a 
-              href={explorerUrl}
-              target="_blank"
-              rel="noopener noreferrer" 
-              className="block mt-2 text-blue-600 hover:underline"
-            >
-              Xem giao dịch trên Sui Explorer
-            </a>
-          </div>
+          <a
+            href={`https://sui-explorer.com/tx/${result.id}`}
+            target="_blank"
+            className="text-primary hover:underline"
+          >
+            Xem giao dịch
+          </a>
         ),
       });
       onClose();
     }
   };
 
-  const getExplorerUrl = (transactionDigest: string) => {
-    // Replace with actual Sui Explorer URL construction
-    return `https://sui-explorer.com/tx/${transactionDigest}`; 
-  };
-
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md p-6 theme-primary-bg rounded-lg shadow-lg">
         <DialogHeader>
-          <DialogTitle className="text-lg font-heading font-bold">Place Prediction</DialogTitle>
+          <DialogTitle className="text-xl font-semibold text-text">
+            Place Prediction
+          </DialogTitle>
         </DialogHeader>
 
-        <div className="mb-6">
-          <div className="mb-4">
-            <h4 className="font-medium text-slate-800 mb-1">{market.title}</h4>
-            <div className="text-sm text-slate-500">Market ends in {formatTimeLeft(market.endDate)}</div>
+        <div className="mb-6 space-y-4">
+          <h4 className="font-medium text-[var(--color-text)]">
+            {market.title}
+          </h4>
+          <div className="text-sm text-[var(--color-secondary)]">
+            Market ends in {new Date(market.endDate).toLocaleDateString()}
           </div>
 
-          <div className="flex items-center gap-4 mb-6">
-            <div className={`flex-1 border ${selectedPrediction === "yes" ? "border-primary-200 bg-primary-50" : "border-slate-200"} rounded-lg p-3`}>
-              <div className="text-center">
-                <div className="text-sm text-slate-600 mb-1">Current Yes Odds</div>
-                <div className={`text-xl font-bold ${selectedPrediction === "yes" ? "text-primary-600" : "text-slate-800"}`}>
-                  {yesOdds.toFixed(2)}x
-                </div>
-              </div>
-            </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Button
+              className={`${
+                selectedPrediction === "yes" ? " button-betting-cus theme-secondary text-white border border-2" : "theme-primary-bg  border border-2"
+              } `}
+              onClick={() => setSelectedPrediction("yes")}
+            >
+              Yes ({yesOdds.toFixed(2)}x)
+            </Button>
+            <Button
+              className={`${
+                selectedPrediction === "no" ? " button-betting-cus theme-secondary  text-white border border-2" : "theme-primary-bg border border-2"
+              } `}
+              onClick={() => setSelectedPrediction("no")}
+            >
+              No ({noOdds.toFixed(2)}x)
+            </Button>
+          </div>
 
-            <div className={`flex-1 border ${selectedPrediction === "no" ? "border-primary-200 bg-primary-50" : "border-slate-200"} rounded-lg p-3`}>
-              <div className="text-center">
-                <div className="text-sm text-slate-600 mb-1">Current No Odds</div>
-                <div className={`text-xl font-bold ${selectedPrediction === "no" ? "text-primary-600" : "text-slate-800"}`}>
-                  {noOdds.toFixed(2)}x
-                </div>
-              </div>
+          <div>
+            <label className="block text-sm font-medium text-[var(--color-text)] mb-1">
+              Amount (SUI)
+            </label>
+            <div className="relative">
+              <Input
+                type="number"
+                placeholder="0.00"
+                min={0}
+                value={amount || ""}
+                onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
+                className="w-full p-2 border rounded-md text-[var(--color-text)]"
+              />
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Your Prediction</label>
-              <div className="grid grid-cols-2 gap-3">
-                <Button 
-                  className={selectedPrediction === "yes" ? "bg-emerald-600 text-white hover:bg-emerald-700 transition-colors" : "bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"}
-                  onClick={() => setSelectedPrediction("yes")}
-                >
-                  Yes
-                </Button>
-                <Button 
-                  className={selectedPrediction === "no" ? "bg-emerald-600 text-white hover:bg-emerald-700 transition-colors" : "bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"} 
-                  onClick={() => setSelectedPrediction("no")}
-                >
-                  No
-                </Button>
-              </div>
+          <div className="bg-[var(--color-secondary)] p-3 rounded-md text-sm text-[var(--color-white)]">
+            <div className="flex justify-between">
+              <span>Potential Payout:</span>
+              <span className="font-medium">
+                {calculatePayout().toFixed(2)} SUI
+              </span>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Amount (SUI)</label>
-              <div className="relative">
-                <Input 
-                  type="number" 
-                  placeholder="0.00" 
-                  min={0}
-                  value={amount || ""}
-                  onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
-                  className="pr-16"
-                />
-                <button 
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs bg-slate-100 px-2 py-1 rounded text-slate-600"
-                  onClick={() => setAmount(100)} // Set a sample MAX value
-                >
-                  MAX
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-slate-50 rounded-lg p-3">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-slate-600">Potential Payout:</span>
-                <span className="font-medium">{calculatePayout().toFixed(2)} SUI</span>
-              </div>
-              <div className="flex justify-between items-center text-sm mt-1">
-                <span className="text-slate-600">Fee ({market.marketFee}%):</span>
-                <span className="font-medium">{calculateFee().toFixed(2)} SUI</span>
-              </div>
+            <div className="flex justify-between mt-1">
+              <span>Fee ({market.marketFee}%):</span>
+              <span className="font-medium">
+                {calculateFee().toFixed(2)} SUI
+              </span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center justify-end gap-3">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onClose}
+            className="border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-white)]"
           >
             Cancel
           </Button>
-          <Button 
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md"
+          <Button
+            className="bg-[var(--color-secondary)] hover:bg-[var(--color-text)] text-[var(--color-white)] px-6 py-2 rounded-lg shadow-md"
             onClick={handlePlaceBet}
             disabled={isPlacingBet || amount <= 0}
           >

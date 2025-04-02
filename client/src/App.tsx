@@ -20,7 +20,7 @@ function Router() {
 function App() {
   return (
     <MarketsProvider>
-      <div className="theme-vegas">
+      <div className="theme-primary-bg">
         <Router />
         <Toaster />
       </div>

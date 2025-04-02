@@ -1,0 +1,31 @@
+
+  .stats-summary-card {
+    @apply bg-blue-900 text-white p-6 rounded-xl flex items-center justify-between w-80;
+    min-height: 144px;
+    transition: all 0.3s ease;
+  }
+
+  .stats-summary-card:hover {
+    @apply transform scale-105 shadow-lg;
+  }
+
+  .stats-summary-icon {
+    @apply text-orange-400;
+    min-width: 24px;
+  }
+
+  .stats-summary-value {
+    @apply text-2xl font-bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .stats-summary-label {
+    @apply text-blue-300;
+    letter-spacing: 0.5px;
+  }
+
+  .stats-summary-change {
+    @apply text-green-400;
+    font-feature-settings: 'tnum';
+  }
+

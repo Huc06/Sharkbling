@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import MobileNavigation from "@/components/layout/MobileNavigation";
 import { Market, Prediction } from "@shared/schema";
@@ -70,7 +69,7 @@ const MyPredictions = () => {
   if (!isConnected) {
     return (
       <div className="flex flex-col min-h-screen lg:flex-row">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <main className="flex-1 lg:ml-64">
           <TopBar />
           <div className="pt-16 pb-16 lg:pb-0">
@@ -194,7 +193,7 @@ const MyPredictions = () => {
 
   return (
     <div className="flex flex-col min-h-screen lg:flex-row">
-      <Sidebar />
+      {/* <Sidebar /> */}
       <main className="flex-1 lg:ml-64">
         <TopBar />
         <div className="pt-16 pb-16 lg:pb-0">

@@ -3,19 +3,54 @@
 @tailwind utilities;
 
 :root {
-  --vegas-red: #fc4040;
-  --vegas-black: #000000;
-  --vegas-green: #1B4D3E;
-  --vegas-gold: #FFD700;
-  --white:#ffffff;
-  --vegas-redoverlay: #D33535  ; 
+  --color-background: #FAF3F3;
+  --color-primary: #A8DADC;
+  --color-secondary: #457B9D;
+  --color-accent: #F4A261;
+  --color-text: #1D3557; 
+  --color-white: #ffffff;
+  --color-black:#000;
 }
-.theme-vegas {
-  @apply bg-gradient-to-br from-[#fc4040] via-black to-[#1B4D3E];
+.theme-primary-bg {
+  background-color: var(--color-background);
+}
+.theme-secondary-bg{
+  background-color: var(--color-text);
+}
+.text-background {
+  color: var(--color-background);
 }
 
-.theme-red-overlay{
-  background-color:  var(--vegas-redoverlay);
+.text-primary {
+  color: var(--color-primary);
+}
+
+.theme-secondary {
+  background-color: var(--color-secondary);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.text-text {
+  color: var(--color-text);
+}
+
+.text-white {
+  color: var(--color-white);
+}
+/* Border Utility Classes */
+.border-primary {
+  border: 1px solid var(--color-primary);
+}
+
+.border-secondary {
+  border: 1px solid var(--color-secondary);
+}
+
+.border-accent {
+  border: 1px solid var(--color-accent);
 }
 @layer base {
   * {

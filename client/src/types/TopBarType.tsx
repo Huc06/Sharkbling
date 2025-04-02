@@ -1,4 +1,4 @@
-interface SidebarItemProps {
+interface TopBarItemProps {
     title: string;
     icon?: React.ReactNode;
     isActive: boolean;

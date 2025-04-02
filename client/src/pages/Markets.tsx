@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import MobileNavigation from "@/components/layout/MobileNavigation";
 import { Market } from "@shared/schema";
@@ -82,7 +81,6 @@ const Markets = () => {
   return (
     <div className="flex flex-col min-h-screen lg:flex-row">
       {/* Sidebar (desktop only) */}
-      <Sidebar />
 
       {/* Main content */}
       <main className="flex-1 lg:ml-64">
@@ -195,7 +193,6 @@ const Markets = () => {
                             ) : market.status === 'resolved' ? (
                               <span className={`flex items-center gap-1 ${market.result === 'yes' ? 'text-green-600' : 'text-red-600'}`}>
                                 <i className={`fas ${market.result === 'yes' ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
-                                Result: {market.result.toUpperCase()}
                               </span>
                             ) : (
                               <span className="flex items-center gap-1">
