@@ -24,8 +24,13 @@ const Dashboard = () => {
           <div className="p-4 sm:p-6 md:p-8">
             {/* Welcome Section */}
             <div className="mb-8">
-              <h1 className="text-2xl font-heading font-bold text-slate-900 mb-2">Welcome to SocialPrediction</h1>
-              <p className="text-slate-600">Predict outcomes on social media trends and earn rewards on Sui blockchain.</p>
+              <h1 className="text-2xl font-heading font-bold text-slate-900 mb-2">
+                Welcome to SocialPrediction
+              </h1>
+              <p className="text-slate-600">
+                Predict outcomes on social media trends and earn rewards on Sui
+                blockchain.
+              </p>
             </div>
 
             {/* Stats Summary */}
@@ -35,7 +40,9 @@ const Dashboard = () => {
             <FeaturedMarkets />
 
             {/* Create Market Banner */}
-            <CreateMarketBanner />
+            <div className="bg-primary-gradient">
+              <CreateMarketBanner />
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Social Trends Section */}
@@ -43,26 +50,53 @@ const Dashboard = () => {
                 <SocialTrends />
               </div>
 
-              {/* Side Section */}
               <div className="space-y-6">
                 {/* Sui Wallet Info */}
-                <div className="mb-6">
+                {/* <div className="mb-6">
                   <SuiWalletInfo />
-                </div>
-                
+                </div> */}
+
                 {/* User Stats */}
-                <UserStats />
-                
+                {/* <UserStats /> */}
+
                 {/* Reputation NFTs */}
-                <ReputationNFTs />
-                
+                {/* <ReputationNFTs /> */}
+
                 {/* Top Predictors */}
-                <TopPredictors />
+                {/* <TopPredictors /> */}
+                <div className="bg-white rounded-lg shadow-md p-6 mt-10">
+                  <h2 className="text-xl font-bold mb-4">Latest Updates</h2>
+                  <p className="text-gray-500 mb-2">
+                    Recent platform improvements
+                  </p>
+                  <div className="border-l-4 border-blue-500 pl-4 mb-4">
+                    <h3 className="font-semibold">Market Analytics Added</h3>
+                    <p className="text-gray-600">
+                      New analytics dashboard for tracking your prediction
+                      performance
+                    </p>
+                  </div>
+                  <div className="border-l-4 border-blue-500 pl-4 mb-4">
+                    <h3 className="font-semibold">Reward System Updated</h3>
+                    <p className="text-gray-600">
+                      Earn more points for accurate predictions in volatile
+                      markets
+                    </p>
+                  </div>
+                  <div className="border-l-4 border-blue-500 pl-4 mb-4">
+                    <h3 className="font-semibold">
+                      Mobile Experience Improved
+                    </h3>
+                    <p className="text-gray-600">
+                      Better mobile responsiveness for on-the-go predictions
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Mobile Navigation */}
         <MobileNavigation />
       </main>

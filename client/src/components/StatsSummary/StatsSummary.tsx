@@ -9,11 +9,11 @@ const StatsSummary: React.FC<StatsSummaryProps> = ({
   change,
 }) => {
   return (
-    <div className="theme-secondary-bg text-white p-6 rounded-xl flex items-center justify-between w-90 relative shadow-md border-2 border-slate-200">
+    <div className="theme-secondary-bg text-white p-6 rounded-xl flex items-center justify-between w-80 relative shadow-md shadow-[var(--color-text)] border-2 border-slate-200">
       <div className="flex items-center gap-4">
         <div>
-          <p className="text-blue-300 text-lg">{label}</p>
-          <h2 className="text-3xl font-bold">{value}</h2>
+          <p className="text-secondary text-lg">{label}</p>
+          <h2 className="text-3xl font-bold text-accent">{value}</h2>
         </div>
       </div>
         <Icon className="text-orange-400 ml-5" size={28} />

@@ -2,22 +2,20 @@
     display: flex;
     align-items: center;
     padding: 12px 20px;
-    color: var(--color-white);
+    color: var(--text-black);
     transition: transform 0.3s, color 0.3s, background-color 0.3s;
     border-radius: 5px;
 }
 
 .topbarbar-item:hover {
     transform: scale(1.05);
-    color: var(--color-white);
     -webkit-background-clip: text; 
     background-clip: text;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-
 }
 .topbarbar-item.active {
-    border-left: 4px solid var(--color-secondary); 
-    color: var(--color-secondary);
+    border-bottom: 2px solid var(--color-secondary); 
+    color: var(--text-black);
+
 }
 .topbarbar-title {
     margin-left: 15px;

@@ -85,7 +85,7 @@ const MyPredictions = () => {
                   Please connect your Sui wallet to view your predictions.
                 </p>
                 <Button 
-                  className="bg-primary-500 hover:bg-primary-600"
+                  className="theme-secondary  hover:theme-secondary"
                   onClick={() => openConnectWalletModal()}
                 >
                   Connect Wallet

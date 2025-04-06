@@ -25,11 +25,11 @@ const FeatureMarketCard = ({
   };
 
   return (
-    <div className="max-w-sm w-full bg-white dark:bg-gray-800 rounded-xl shadow-md transition-transform transform hover:scale-105">
-      <div className="p-5">
+    <div className=" max-w-sm w-full bg-white dark:bg-gray-800 rounded-xl shadow-md transition-transform transform hover:scale-105">
+      <div className="">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+        <div className="flex items-center justify-between bg-primary p-5 rounded-t-xl">
+          <span className="font-medium text-white text-l">
             {market.platform}
           </span>
           <span className="px-2 py-1 text-xs font-bold text-white bg-green-500 rounded-full">
@@ -38,12 +38,12 @@ const FeatureMarketCard = ({
         </div>
 
         {/* Market Title */}
-        <h2 className="mt-3 text-xl font-semibold text-gray-800 dark:text-white">
+        <h2 className="mt-3 text-xl font-semibold text-gray-800 dark:text-white px-5">
           {market.title}
         </h2>
 
         {/* Time and Pool Info */}
-        <div className="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400">
+        <div className="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400 px-5">
           <Clock size={16} className="mr-1" />
           <span>{formatTimeLeft(market.endDate)}</span>
           <span className="mx-2">•</span>
@@ -51,11 +51,15 @@ const FeatureMarketCard = ({
         </div>
 
         {/* Prediction Progress */}
-        <div className="mt-4">
-          <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+        <div className="mt-4 px-5">
+          <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden ">
             <div
               className={`absolute top-0 left-0 h-full rounded-full ${platformColors[market.platform as keyof typeof platformColors]}`}
               style={{ width: `${yesPercentage}%` }}
+            ></div>
+            <div
+              className={`absolute top-0 left-0 h-full rounded-full bg-red-500`}
+              style={{ width: `${noPercentage}%`, left: `${yesPercentage}%` }}
             ></div>
           </div>
           <div className="mt-2 flex justify-between text-xs text-gray-500 dark:text-gray-400">
@@ -65,23 +69,23 @@ const FeatureMarketCard = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-5 space-y-3">
+        <div className="mt-5 space-y-3 px-5">
           <button
             onClick={() => onPlaceBet("yes")}
-            className={`w-full py-2 rounded-lg font-semibold text-white ${platformColors[market.platform as keyof typeof platformColors]} hover:opacity-90 transition duration-200`}
+            className={` bg-primary w-full py-2 rounded-lg font-semibold text-black  ${platformColors[market.platform as keyof typeof platformColors]} hover:opacity-90 transition duration-200`}
           >
             Predict Yes
           </button>
           <button
             onClick={() => onPlaceBet("no")}
-            className="w-full py-2 rounded-lg font-semibold bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-500 transition duration-200"
+            className="w-full py-2 rounded-lg font-semibold bg-tag-politics dark:bg-gray-600 text-gray-800 dark:text-gray-200  dark:hover:bg-gray-500 transition duration-200"
           >
             Predict No
           </button>
         </div>
 
         {/* Footer */}
-        <div className="mt-5 flex items-center justify-between text-sm">
+        <div className="my-5 flex items-center justify-between text-sm px-5">
           <div className="flex items-center text-gray-500 dark:text-gray-400">
             <Users size={16} className="mr-1" />
             <span>Participants</span>

@@ -3,64 +3,141 @@
 @tailwind utilities;
 
 :root {
+  /* Base Colors */
   --color-background: #FAF3F3;
-  --color-primary: #A8DADC;
-  --color-secondary: #457B9D;
-  --color-accent: #F4A261;
-  --color-text: #1D3557; 
+  --color-text: #1D3557;
   --color-white: #ffffff;
-  --color-black:#000;
+  --color-black: #000000;
+
+  /* Main UI Colors */
+  --color-primary: #A8DADC;        
+  --color-secondary: #457B9D;      
+  --color-accent: #F4A261;   
+
+  /* Tag Colors (áp dụng cho text & bg) */
+  --color-tag-politics: #B0C4DE;
+  --color-tag-stocks: #AED581;
+  --color-tag-technology: #80CBC4;
+
+  /* Status Bar */
+  --color-yes: #2ECC71;
+  --color-no: #E74C3C;
 }
+
+/* === Backgrounds === */
 .theme-primary-bg {
   background-color: var(--color-background);
 }
-.theme-secondary-bg{
-  background-color: var(--color-text);
-}
-.text-background {
-  color: var(--color-background);
-}
 
-.text-primary {
-  color: var(--color-primary);
+.theme-secondary-bg {
+  background-color: var(--color-white);
 }
 
 .theme-secondary {
   background-color: var(--color-secondary);
 }
 
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+.bg-primary-gradient{
+  background: linear-gradient(to right, var(--bg-primary), var(--theme-secondary));
+}
+/* Tag backgrounds */
+.bg-tag-politics {
+  background-color: var(--color-tag-politics);
+}
+.bg-tag-stocks {
+  background-color: var(--color-tag-stocks);
+}
+.bg-tag-technology {
+  background-color: var(--color-tag-technology);
+}
+
+/* Status backgrounds */
+.bg-yes {
+  background-color: var(--color-yes);
+}
+.bg-no {
+  background-color: var(--color-no);
+}
+
+/* === Text Colors === */
+.text-background {
+  color: var(--color-background);
+}
+.text-primary {
+  color: var(--color-primary);
+}
+.text-secondary {
+  color: var(--color-secondary);
+}
 .text-accent {
   color: var(--color-accent);
 }
-
 .text-text {
   color: var(--color-text);
 }
-
 .text-white {
   color: var(--color-white);
 }
-/* Border Utility Classes */
+.text-black {
+  color: var(--color-black);
+}
+
+/* Tag text colors */
+.text-tag-politics {
+  color: var(--color-tag-politics);
+}
+.text-tag-stocks {
+  color: var(--color-tag-stocks);
+}
+.text-tag-technology {
+  color: var(--color-tag-technology);
+}
+
+/* Status text */
+.text-yes {
+  color: var(--color-yes);
+}
+.text-no {
+  color: var(--color-no);
+}
+
+/* === Borders === */
 .border-primary {
   border: 1px solid var(--color-primary);
 }
-
 .border-secondary {
   border: 1px solid var(--color-secondary);
 }
-
 .border-accent {
   border: 1px solid var(--color-accent);
 }
+
+/* === Tailwind Layer Base === */
 @layer base {
   * {
     @apply border-border;
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased;
+    background-color: var(--color-background);
+    color: var(--color-text);
   }
+
   .vegas-theme {
-    @apply bg-gradient-to-r from(var(--vegas-red)) via(var(--vegas-black)) to(var(--vegas-green)); 
+    @apply bg-gradient-to-r;
+    background-image: linear-gradient(
+      to right,
+      var(--color-no),
+      var(--color-black),
+      var(--color-yes)
+    );
   }
 }
