@@ -1,75 +1,70 @@
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { useSuiWallet } from "@/hooks/useSuiWallet";
 import { Button } from "@/components/ui/button";
+import SidebarItem from "../SidebarItem/SidebarItem";
+import { useState } from "react";
 
 const Sidebar = () => {
   const [location] = useLocation();
-  const { isConnected, walletAddress, connectWallet, openConnectWalletModal } = useSuiWallet();
+  const [activeItem, setActiveItem] = useState<string | null>(null);
+  const { isConnected, walletAddress, openConnectWalletModal } = useSuiWallet();
+
+  const navigationItems = [
+    { title: "Dashboard", icon: <i className="fas fa-home"></i> },
+    { title: "Markets", icon: <i className="fas fa-chart-bar"></i> },
+    { title: "My Predictions", icon: <i className="fas fa-bullseye"></i> },
+    { title: "Rewards", icon: <i className="fas fa-trophy"></i> },
+  ];
+
+  const socialNavigation = [
+    { title: "X", icon: <i className="fab fa-twitter"></i> },
+  ];
 
   return (
-    <aside className="hidden lg:flex lg:w-64 flex-col bg-white border-r border-slate-200 fixed h-full">
+    <aside className="hidden lg:flex lg:w-64 flex-col border-slate-200 fixed h-full bg-gradient-to-br text-white">
+      {/* Header */}
       <div className="p-4 border-b border-slate-200">
         <div className="flex items-center gap-3">
-          <div className="bg-primary-500 text-white w-8 h-8 rounded-lg flex items-center justify-center">
+          <div className="bg-primary-700 text-white w-8 h-8 rounded-lg flex items-center justify-center">
             <i className="fas fa-chart-line"></i>
           </div>
           <h1 className="font-heading font-bold text-xl">SocialPrediction</h1>
         </div>
       </div>
-      
+
+      {/* Navigation */}
       <nav className="p-2 flex-1">
         <div className="space-y-1">
-          <Link href="/">
-            <div className={`flex items-center gap-3 p-3 rounded-lg ${location === "/" ? "bg-primary-50 text-primary-600" : "text-slate-600 hover:bg-slate-50"} font-medium cursor-pointer`}>
-              <i className="fas fa-home w-5 text-center"></i>
-              <span>Dashboard</span>
-            </div>
-          </Link>
-          <Link href="/markets">
-            <div className={`flex items-center gap-3 p-3 rounded-lg ${location === "/markets" ? "bg-primary-50 text-primary-600" : "text-slate-600 hover:bg-slate-50"} font-medium cursor-pointer`}>
-              <i className="fas fa-trophy w-5 text-center"></i>
-              <span>Markets</span>
-            </div>
-          </Link>
-          <Link href="/my-predictions">
-            <div className={`flex items-center gap-3 p-3 rounded-lg ${location === "/my-predictions" ? "bg-primary-50 text-primary-600" : "text-slate-600 hover:bg-slate-50"} font-medium cursor-pointer`}>
-              <i className="fas fa-history w-5 text-center"></i>
-              <span>My Predictions</span>
-            </div>
-          </Link>
-          <div className="flex items-center gap-3 p-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium cursor-pointer">
-            <i className="fas fa-coins w-5 text-center"></i>
-            <span>Rewards</span>
-          </div>
-          <div className="flex items-center gap-3 p-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium cursor-pointer">
-            <i className="fas fa-chart-pie w-5 text-center"></i>
-            <span>Analytics</span>
-          </div>
+          {navigationItems.map((item) => (
+            <SidebarItem
+              key={item.title}
+              title={item.title}
+              icon={item.icon}
+              isActive={activeItem === item.title}
+              onClick={() => setActiveItem(item.title)}
+            />
+          ))}
         </div>
-        
+
+        {/* Social Platforms */}
         <div className="mt-6">
-          <h3 className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Social Platforms</h3>
+          <h3 className="px-3 text-sm font-semibold text-slate-300 uppercase tracking-wider">
+            Social Platforms
+          </h3>
           <div className="mt-2 space-y-1">
-            <div className="flex items-center gap-3 p-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium cursor-pointer">
-              <i className="fab fa-github w-5 text-center"></i>
-              <span>GitHub</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium cursor-pointer">
-              <i className="fab fa-linkedin w-5 text-center"></i>
-              <span>LinkedIn</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium cursor-pointer">
-              <i className="fas fa-hashtag w-5 text-center"></i>
-              <span>Farcaster</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium cursor-pointer">
-              <i className="fab fa-discord w-5 text-center"></i>
-              <span>Discord</span>
-            </div>
+            {socialNavigation.map((item) => (
+              <SidebarItem
+                key={item.title}
+                title={item.title}
+                icon={item.icon}
+                isActive={activeItem === item.title}
+                onClick={() => setActiveItem(item.title)}
+              />
+            ))}
           </div>
         </div>
       </nav>
-      
+
       {/* User Profile Mini */}
       <div className="p-4 border-t border-slate-200">
         {isConnected ? (
@@ -78,11 +73,12 @@ const Sidebar = () => {
               <i className="fas fa-user text-primary-500"></i>
             </div>
             <div>
-              <div className="font-medium text-sm text-slate-900">
-                {walletAddress?.substring(0, 6)}...{walletAddress?.substring(walletAddress.length - 4)}
+              <div className="font-medium text-sm text-white">
+                {walletAddress?.substring(0, 6)}...
+                {walletAddress?.substring(walletAddress.length - 4)}
               </div>
-              <Button 
-                variant="link" 
+              <Button
+                variant="link"
                 className="text-xs text-primary-500 font-medium p-0 h-auto"
               >
                 Xem hồ sơ
@@ -95,9 +91,9 @@ const Sidebar = () => {
               <i className="fas fa-user text-slate-500"></i>
             </div>
             <div>
-              <div className="font-medium text-sm text-slate-900">Chưa kết nối</div>
-              <Button 
-                variant="link" 
+              <div className="font-medium text-sm text-white">Chưa kết nối</div>
+              <Button
+                variant="link"
                 className="text-xs text-primary-500 font-medium p-0 h-auto"
                 onClick={openConnectWalletModal}
               >

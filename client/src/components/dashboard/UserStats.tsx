@@ -24,7 +24,7 @@ const UserStats = () => {
             </div>
             <p className="text-slate-500 text-sm mb-4 text-center">Connect your Sui Wallet to view your stats and participate in prediction markets</p>
             <button 
-              className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+              className="theme-secondary  hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
               onClick={connectWallet}
             >
               <i className="fas fa-wallet"></i>

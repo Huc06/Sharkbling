@@ -1,0 +1,4 @@
+.button-betting-cus:hover {
+    background-color: var(--color-primary); 
+    color: white;
+  }

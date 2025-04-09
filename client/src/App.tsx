@@ -20,8 +20,10 @@ function Router() {
 function App() {
   return (
     <MarketsProvider>
-      <Router />
-      <Toaster />
+      <div className="theme-primary-bg">
+        <Router />
+        <Toaster />
+      </div>
     </MarketsProvider>
   );
 }

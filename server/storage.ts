@@ -85,6 +85,18 @@ export class MemStorage implements IStorage {
       status: "active",
     };
 
+    const linkedinMarket11: InsertMarket = {
+      title: "Will Mysten Labs' post about Move Language reach 1000+ reactions?",
+      description: "Prediction market for Mysten Labs LinkedIn post",
+      platform: "LinkedIn",
+      contentUrl: "https://linkedin.com/company/mysten-labs",
+      creatorAddress: "0x3ab...9c5d",
+      initialPool: 12180,
+      endDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
+      resolutionMethod: "Automatic",
+      marketFee: 2,
+      status: "active",
+    };
     const farcasterMarket: InsertMarket = {
       title: "Will the Farcaster post about Sui Prediction Markets exceed 500 recasts?",
       description: "Prediction market for Farcaster post about Sui",
@@ -101,7 +113,7 @@ export class MemStorage implements IStorage {
     this.createMarket(githubMarket);
     this.createMarket(linkedinMarket);
     this.createMarket(farcasterMarket);
-
+    this.createMarket(linkedinMarket11);
     // Sample social trends
     const linkedinTrend: InsertSocialTrend = {
       platform: "LinkedIn",
@@ -166,6 +178,7 @@ export class MemStorage implements IStorage {
       yesPool,
       noPool,
       createdAt,
+      result: null,
     };
     
     this.markets.set(id, newMarket);
