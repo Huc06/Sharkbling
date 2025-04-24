@@ -15,6 +15,7 @@ const TopBar = () => {
     { title: "Dashboard", path: "/" },
     { title: "Markets", path: "/markets" },
     { title: "My Predictions", path: "/my-predictions" },
+    { title: "Chatbot", path: "/chatbot" },
     { title: "Rewards", path: "/rewards" },
   ];
 
@@ -30,7 +31,7 @@ const TopBar = () => {
             <i className="fas fa-chart-line"></i>
           </div>
           <h1 className="font-heading font-bold text-xl text-secondary ">
-            Analytics Pro
+            SharkBling
           </h1>
           <div className="flex items-center space-x-4 ">
             {navigationItems.map((item) => (
