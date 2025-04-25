@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import TopBar from "@/components/layout/TopBar";
 import MobileNavigation from "@/components/layout/MobileNavigation";
 import { Market } from "@shared/schema";
@@ -19,6 +19,7 @@ import SuiWalletModal from "@/components/modals/SuiWalletModal";
 import FeatureMarketCard from "@/components/FeatureMarketsCard/FeatureMarketsCard";
 
 const Markets = () => {
+  const queryClient = useQueryClient();
   const [selectedPlatform, setSelectedPlatform] = useState<string>("All");
   const [selectedStatus, setSelectedStatus] = useState<string>("All");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -32,6 +33,11 @@ const Markets = () => {
   const { data: markets, isLoading } = useQuery<Market[]>({
     queryKey: ["/api/markets"],
   });
+
+  const handleMarketCreated = () => {
+    setShowCreateModal(false);
+    queryClient.invalidateQueries({ queryKey: ["/api/markets"] });
+  };
 
   // Filter markets based on selected filters and search term
   const filteredMarkets = markets?.filter((market) => {
@@ -260,7 +266,10 @@ const Markets = () => {
 
       {/* Modals */}
       {showCreateModal && (
-        <CreateMarketModal onClose={() => setShowCreateModal(false)} />
+        <CreateMarketModal 
+          onClose={() => setShowCreateModal(false)} 
+          onSuccess={handleMarketCreated}
+        />
       )}
 
       {showBettingModal && selectedMarket && (

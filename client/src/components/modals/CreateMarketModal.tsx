@@ -16,9 +16,10 @@ interface MarketFormData {
 
 interface CreateMarketModalProps {
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose }) => {
+const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose, onSuccess }) => {
   const walletAdapter = useWalletAdapter();
   const { register, handleSubmit, formState: { errors } } = useForm<MarketFormData>();
 
@@ -32,6 +33,11 @@ const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose }) => {
         minAmount: parseInt(data.minAmount),
         coinObjectId: data.coinObjectId,
       });
+      
+      // Call success callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
       onClose();
     } catch (error) {
       console.error("Failed to create market:", error);
@@ -46,6 +52,28 @@ const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose }) => {
             Create Prediction Market
           </DialogTitle>
         </DialogHeader>
+
+        {/* Add transaction status display */}
+        {walletAdapter.txResult.loading && (
+          <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded">
+            Transaction in progress...
+          </div>
+        )}
+        {walletAdapter.txResult.error && (
+          <div className="mb-4 p-3 bg-red-50 text-red-700 rounded">
+            Error: {walletAdapter.txResult.error}
+          </div>
+        )}
+        {walletAdapter.txResult.success && (
+          <div className="mb-4 p-3 bg-green-50 text-green-700 rounded">
+            Market created successfully!
+            {walletAdapter.txResult.txId && (
+              <div className="text-sm mt-1">
+                Transaction ID: <span className="font-mono">{walletAdapter.txResult.txId}</span>
+              </div>
+            )}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
@@ -104,7 +132,6 @@ const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose }) => {
                   message: "Invalid Sui object ID format"
                 }
               })}
-              defaultValue="0x852d1d6340775421f833ffcabf36a0dcb775f11fd2b56efa26512421aadef0ee"
               className="w-full font-mono"
             />
             {errors.coinObjectId && <p className="text-red-500 text-sm">{errors.coinObjectId.message}</p>}
@@ -116,14 +143,16 @@ const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose }) => {
               variant="outline"
               onClick={onClose}
               className="border border-secondary text-text hover:bg-secondary hover:text-white"
+              disabled={walletAdapter.txResult.loading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
               className="bg-primary hover:bg-accent text-white"
+              disabled={walletAdapter.txResult.loading}
             >
-              Create Market
+              {walletAdapter.txResult.loading ? "Creating..." : "Create Market"}
             </Button>
           </div>
         </form>

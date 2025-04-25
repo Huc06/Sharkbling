@@ -1,5 +1,6 @@
 import { useSuiClient, useCurrentAccount, useSuiClientContext, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
+import { useState } from 'react';
 
 interface CreateMarketParams {
   title: string;
@@ -7,6 +8,13 @@ interface CreateMarketParams {
   resolutionTime: number;
   minAmount: number;
   coinObjectId: string;
+}
+
+interface TransactionResult {
+  loading: boolean;
+  error: string | null;
+  success: boolean;
+  txId?: string;
 }
 
 export function useWalletAdapter() {
@@ -19,6 +27,33 @@ export function useWalletAdapter() {
   const PACKAGE_ID = import.meta.env.VITE_SUI_PACKAGE_ID || "0x2a99144719afd614c77be6b58644d15c3cec9e73fcbf7f319753f27556a65c3a";
 
   const { mutateAsync: signAndExecute } = useSignAndExecuteTransaction();
+
+  const [txResult, setTxResult] = useState<TransactionResult>({
+    loading: false,
+    error: null,
+    success: false
+  });
+
+  const executeTransaction = async (tx: Transaction) => {
+    setTxResult({ loading: true, error: null, success: false });
+    try {
+      const result = await signAndExecute({ transaction: tx });
+      setTxResult({
+        loading: false,
+        error: null,
+        success: true,
+        txId: result.digest
+      });
+      return result;
+    } catch (error) {
+      setTxResult({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Transaction failed',
+        success: false
+      });
+      throw error;
+    }
+  };
 
   const createPredictionMarket = async (params: CreateMarketParams) => {
     if (!currentAccount) return null;
@@ -39,7 +74,7 @@ export function useWalletAdapter() {
       ],
     });
 
-    return signAndExecute({ transaction: tx });
+    return executeTransaction(tx);
   };
 
   const placePrediction = async (
@@ -59,7 +94,7 @@ export function useWalletAdapter() {
       ],
     });
 
-    return signAndExecute({ transaction: tx });
+    return executeTransaction(tx);
   };
 
   const claimWinnings = async (marketId: string) => {
@@ -73,7 +108,7 @@ export function useWalletAdapter() {
       ],
     });
 
-    return signAndExecute({ transaction: tx });
+    return executeTransaction(tx);
   };
 
   return {
@@ -81,6 +116,7 @@ export function useWalletAdapter() {
     walletAddress: currentAccount?.address,
     network: currentNetwork,
     suiClient,
+    txResult,
     createPredictionMarket,
     placePrediction,
     claimWinnings
