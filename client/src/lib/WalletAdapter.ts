@@ -1,6 +1,14 @@
 import { useSuiClient, useCurrentAccount, useSuiClientContext, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
 
+interface CreateMarketParams {
+  title: string;
+  description: string;
+  resolutionTime: number;
+  minAmount: number;
+  coinObjectId: string;
+}
+
 export function useWalletAdapter() {
   const suiClient = useSuiClient();
   const currentAccount = useCurrentAccount();
@@ -9,29 +17,31 @@ export function useWalletAdapter() {
 
   // Set default package ID or get from environment
   const PACKAGE_ID = import.meta.env.VITE_SUI_PACKAGE_ID || "0x2a99144719afd614c77be6b58644d15c3cec9e73fcbf7f319753f27556a65c3a";
-  const OBJECT_ID = "0x852d1d6340775421f833ffcabf36a0dcb775f11fd2b56efa26512421aadef0ee";
 
   const { mutateAsync: signAndExecute } = useSignAndExecuteTransaction();
 
-  const createPredictionMarket = async () => {
+  const createPredictionMarket = async (params: CreateMarketParams) => {
     if (!currentAccount) return null;
+    if (!params.title || !params.description || !params.resolutionTime || 
+        !params.minAmount || !params.coinObjectId) {
+      throw new Error("Missing required parameters");
+    }
 
     const tx = new Transaction();
     tx.moveCall({
       target: `${PACKAGE_ID}::prediction_market::create_market`,
       arguments: [
-        tx.pure.string("Market 1"),
-        tx.pure.string("A simple prediction market"),
-        tx.pure.u64(1712951200),
-        tx.pure.u64(2),
-        tx.object(OBJECT_ID),
+        tx.pure.string(params.title),
+        tx.pure.string(params.description),
+        tx.pure.u64(params.resolutionTime),
+        tx.pure.u64(params.minAmount),
+        tx.object(params.coinObjectId),
       ],
     });
 
     return signAndExecute({ transaction: tx });
   };
 
-  // Ví dụ về placePrediction và claimWinnings (bạn cần kiểm tra lại args cho đúng contract)
   const placePrediction = async (
     marketId: string,
     prediction: boolean,
