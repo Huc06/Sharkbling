@@ -16,22 +16,77 @@ interface MarketFormData {
 interface CreateMarketModalProps {
   onClose: () => void;
   onSuccess?: () => void;
+  initialData?: {
+    title?: string;
+    description?: string;
+    resolutionTime?: string;
+    minAmount?: string;
+  };
 }
 
-const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose, onSuccess }) => {
+const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose, onSuccess, initialData }) => {
   const walletAdapter = useWalletAdapter();
-  const { register, handleSubmit, formState: { errors } } = useForm<MarketFormData>();
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<MarketFormData>({
+    defaultValues: initialData || {}
+  });
+
+  // Theo dõi tất cả các giá trị form trong thời gian thực
+  const formValues = watch();
+
+  // Log giá trị form mỗi khi chúng thay đổi
+  React.useEffect(() => {
+    console.table(formValues); // Sử dụng console.table thay vì console.log
+  }, [formValues]);
+
+  // Lưu dữ liệu vào localStorage dưới dạng mảng
+  const saveMarketData = (data: any) => {
+    // Lấy dữ liệu hiện có
+    const existingData = localStorage.getItem('marketFormDataList');
+    let marketList = [];
+
+    if (existingData) {
+      marketList = JSON.parse(existingData);
+    }
+
+    // Thêm dữ liệu mới vào mảng
+    marketList.push({
+      ...data,
+      id: Date.now(), // Thêm ID duy nhất
+      createdAt: new Date().toISOString()
+    });
+
+    // Lưu lại vào localStorage
+    localStorage.setItem('marketFormDataList', JSON.stringify(marketList));
+  };
 
   const onSubmit = async (data: MarketFormData) => {
+    // Log dữ liệu form khi submit
+    console.table(data);
+
     try {
       const timestamp = Math.floor(new Date(data.resolutionTime).getTime() / 1000);
+      // Log dữ liệu đã được xử lý
+      const processedData = {
+        title: data.title,
+        description: data.description,
+        resolutionTime: timestamp,
+        minAmount: parseInt(data.minAmount),
+        coinObjectId: data.coinObjectId,
+      };
+
+      console.log("Processed data:", processedData);
+
+      // Lưu dữ liệu vào localStorage
+      saveMarketData(processedData);
+
       await walletAdapter.createPredictionMarket({
         title: data.title,
         description: data.description,
         resolutionTime: timestamp,
         minAmount: parseFloat(data.minAmount),
       });
-      
+
+
       // Call success callback if provided
       if (onSuccess) {
         onSuccess();
@@ -41,7 +96,6 @@ const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose, onSucces
       console.error("Failed to create market:", error);
     }
   };
-
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-lg w-full bg-white p-6 rounded-lg shadow-lg">
@@ -124,7 +178,6 @@ const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose, onSucces
             </div>
             {errors.minAmount && <p className="text-red-500 text-sm">{errors.minAmount.message}</p>}
           </div>
-
           <div className="flex items-center justify-end gap-4 pt-4">
             <Button
               type="button"
