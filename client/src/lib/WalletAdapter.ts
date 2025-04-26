@@ -88,15 +88,22 @@ export function useWalletAdapter() {
     if (!currentAccount) return null;
 
     const tx = new Transaction();
+    if (amount < 0.00001) {
+      throw new Error("Amount too small, minimum is 0.00001 SUI");
+    }
+
+    // Convert SUI to MIST (1 SUI = 1,000,000,000 MIST)
     const amountInMist = BigInt(Math.floor(amount * 1_000_000_000));
-    const [coin] = tx.splitCoins(tx.gas, [amountInMist]);
+    
+    // Split coins from gas for prediction
+    const [predictionCoin] = tx.splitCoins(tx.gas, [amountInMist]);
 
     tx.moveCall({
       target: `${PACKAGE_ID}::prediction_market::place_prediction`,
       arguments: [
-        tx.pure.string(marketId),
-        tx.pure.bool(prediction),
-        coin,
+        tx.object(marketId),    // Pass as object reference
+        predictionCoin,         // Pass the split coin
+        tx.pure.bool(prediction)
       ],
     });
 
@@ -110,7 +117,7 @@ export function useWalletAdapter() {
     tx.moveCall({
       target: `${PACKAGE_ID}::prediction_market::claim_winnings`,
       arguments: [
-        tx.pure.string(marketId),
+        tx.pure.id(marketId),        // Changed to use ID type
       ],
     });
 
