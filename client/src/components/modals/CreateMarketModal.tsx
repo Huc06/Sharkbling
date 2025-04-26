@@ -71,7 +71,6 @@ const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose, onSucces
         description: data.description,
         resolutionTime: timestamp,
         minAmount: parseInt(data.minAmount),
-        coinObjectId: data.coinObjectId,
       };
 
       console.log("Processed data:", processedData);
