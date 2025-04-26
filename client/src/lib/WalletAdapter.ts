@@ -7,7 +7,6 @@ interface CreateMarketParams {
   description: string;
   resolutionTime: number;
   minAmount: number;
-  coinObjectId: string;
 }
 
 interface TransactionResult {
@@ -57,20 +56,24 @@ export function useWalletAdapter() {
 
   const createPredictionMarket = async (params: CreateMarketParams) => {
     if (!currentAccount) return null;
-    if (!params.title || !params.description || !params.resolutionTime || 
-        !params.minAmount || !params.coinObjectId) {
+    if (!params.title || !params.description || !params.resolutionTime || !params.minAmount) {
       throw new Error("Missing required parameters");
     }
 
     const tx = new Transaction();
+    // Convert SUI to MIST (1 SUI = 1,000,000,000 MIST)
+    const amountInMist = BigInt(Math.floor(params.minAmount * 1_000_000_000));
+    // Split coins from gas for the prediction market
+    const [coin] = tx.splitCoins(tx.gas, [amountInMist]);
+
     tx.moveCall({
       target: `${PACKAGE_ID}::prediction_market::create_market`,
       arguments: [
         tx.pure.string(params.title),
         tx.pure.string(params.description),
         tx.pure.u64(params.resolutionTime),
-        tx.pure.u64(params.minAmount),
-        tx.object(params.coinObjectId),
+        tx.pure.u64(amountInMist),
+        coin,
       ],
     });
 
@@ -85,12 +88,15 @@ export function useWalletAdapter() {
     if (!currentAccount) return null;
 
     const tx = new Transaction();
+    const amountInMist = BigInt(Math.floor(amount * 1_000_000_000));
+    const [coin] = tx.splitCoins(tx.gas, [amountInMist]);
+
     tx.moveCall({
       target: `${PACKAGE_ID}::prediction_market::place_prediction`,
       arguments: [
         tx.pure.string(marketId),
         tx.pure.bool(prediction),
-        tx.pure.u64(amount),
+        coin,
       ],
     });
 
