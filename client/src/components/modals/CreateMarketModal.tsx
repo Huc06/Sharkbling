@@ -11,7 +11,6 @@ interface MarketFormData {
   description: string;
   resolutionTime: string;
   minAmount: string;
-  coinObjectId: string;
 }
 
 interface CreateMarketModalProps {
@@ -22,7 +21,6 @@ interface CreateMarketModalProps {
     description?: string;
     resolutionTime?: string;
     minAmount?: string;
-    coinObjectId?: string;
   };
 }
 
@@ -85,8 +83,7 @@ const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose, onSucces
         title: data.title,
         description: data.description,
         resolutionTime: timestamp,
-        minAmount: parseInt(data.minAmount),
-        coinObjectId: data.coinObjectId,
+        minAmount: parseFloat(data.minAmount),
       });
 
 
@@ -163,35 +160,24 @@ const CreateMarketModal: React.FC<CreateMarketModalProps> = ({ onClose, onSucces
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="minAmount">Minimum Amount</Label>
-            <Input
+            <Label htmlFor="minAmount">Amount (SUI)</Label>
+            <Input 
               id="minAmount"
               type="number"
-              {...register("minAmount", {
-                required: "Minimum amount is required",
-                min: { value: 1, message: "Amount must be greater than 0" }
+              step="0.000000001"
+              min="0"
+              {...register("minAmount", { 
+                required: "Amount is required",
+                validate: value => parseFloat(value) > 0 || "Amount must be greater than 0"
               })}
+              placeholder="Enter amount in SUI"
               className="w-full"
             />
+            <div className="text-xs text-gray-500">
+              Enter the amount in SUI (1 SUI = 1,000,000,000 MIST)
+            </div>
             {errors.minAmount && <p className="text-red-500 text-sm">{errors.minAmount.message}</p>}
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="coinObjectId">Coin Object ID</Label>
-            <Input
-              id="coinObjectId"
-              {...register("coinObjectId", {
-                required: "Coin Object ID is required",
-                pattern: {
-                  value: /^0x[a-fA-F0-9]+$/,
-                  message: "Invalid Sui object ID format"
-                }
-              })}
-              className="w-full font-mono"
-            />
-            {errors.coinObjectId && <p className="text-red-500 text-sm">{errors.coinObjectId.message}</p>}
-          </div>
-
           <div className="flex items-center justify-end gap-4 pt-4">
             <Button
               type="button"
