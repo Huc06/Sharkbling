@@ -18,81 +18,110 @@ const FeatureMarketCard = ({
   onViewDetails
 }: FeatureMarketCardProps) => {
   const platformColors = {
-    GitHub: "bg-blue-500",
-    LinkedIn: "bg-blue-700",
-    Farcaster: "bg-purple-600",
-    Discord: "bg-indigo-600"
+    GitHub: {
+      bg: "bg-teal-100",
+      text: "text-teal-800",
+      progressBar: "bg-blue-500"
+    },
+    LinkedIn: {
+      bg: "bg-blue-100",
+      text: "text-blue-800",
+      progressBar: "bg-blue-600"
+    },
+    Farcaster: {
+      bg: "bg-purple-100",
+      text: "text-purple-800",
+      progressBar: "bg-purple-600"
+    },
+    Discord: {
+      bg: "bg-indigo-100",
+      text: "text-indigo-800",
+      progressBar: "bg-indigo-600"
+    }
   };
 
-  return (
-    <div className=" max-w-sm w-full bg-white dark:bg-gray-800 rounded-xl shadow-md transition-transform transform hover:scale-105">
-      <div className="">
-        {/* Header */}
-        <div className="flex items-center justify-between bg-primary p-5 rounded-t-xl">
-          <span className="font-medium text-white text-l">
-            {market.platform}
-          </span>
-          <span className="px-2 py-1 text-xs font-bold text-white bg-green-500 rounded-full">
-            Active
-          </span>
-        </div>
+  const platform = market.platform as keyof typeof platformColors;
+  const colors = platformColors[platform] || platformColors.GitHub;
 
+  const statusColors = {
+    active: "bg-green-500",
+    ended: "bg-yellow-500",
+    resolved: "bg-blue-500"
+  };
+
+  const status = market.status || "active";
+  const statusColor = statusColors[status as keyof typeof statusColors] || statusColors.active;
+
+  return (
+    <div className="w-full bg-white rounded-lg shadow-sm overflow-hidden h-full flex flex-col">
+      {/* Header */}
+      <div className={`flex items-center justify-between p-2 ${colors.bg}`}>
+        <span className={`font-medium ${colors.text} text-xs`}>
+          {market.platform}
+        </span>
+        <span className={`px-2 py-0.5 text-xs font-bold text-white rounded-full ${statusColor}`}>
+          {status.charAt(0).toUpperCase() + status.slice(1)}
+        </span>
+      </div>
+
+      {/* Content */}
+      <div className="p-3 flex-1 flex flex-col">
         {/* Market Title */}
-        <h2 className="mt-3 text-xl font-semibold text-gray-800 dark:text-white px-5">
+        <h2 className="text-sm font-semibold text-gray-800 mb-2 line-clamp-2">
           {market.title}
         </h2>
 
         {/* Time and Pool Info */}
-        <div className="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400 px-5">
-          <Clock size={16} className="mr-1" />
+        <div className="flex items-center text-xs text-gray-500 mb-2">
+          <Clock size={12} className="mr-1" />
           <span>{formatTimeLeft(market.endDate)}</span>
-          <span className="mx-2">•</span>
+          <span className="mx-1">•</span>
           <span>${market.initialPool.toLocaleString()} pool</span>
         </div>
 
         {/* Prediction Progress */}
-        <div className="mt-4 px-5">
-          <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden ">
+        <div className="mb-3">
+          <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className={`absolute top-0 left-0 h-full rounded-full ${platformColors[market.platform as keyof typeof platformColors]}`}
+              className={`absolute top-0 left-0 h-full rounded-l-full ${colors.progressBar}`}
               style={{ width: `${yesPercentage}%` }}
             ></div>
             <div
-              className={`absolute top-0 left-0 h-full rounded-full bg-red-500`}
+              className="absolute top-0 left-0 h-full rounded-r-full bg-red-500"
               style={{ width: `${noPercentage}%`, left: `${yesPercentage}%` }}
             ></div>
           </div>
-          <div className="mt-2 flex justify-between text-xs text-gray-500 dark:text-gray-400">
+          <div className="mt-1 flex justify-between text-xs text-gray-600">
             <span>Yes ({yesPercentage.toFixed(0)}%)</span>
             <span>No ({noPercentage.toFixed(0)}%)</span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-5 space-y-3 px-5">
+        <div className="space-y-1 mt-auto">
           <button
             onClick={() => onPlaceBet("yes")}
-            className={` bg-primary w-full py-2 rounded-lg font-semibold text-black  ${platformColors[market.platform as keyof typeof platformColors]} hover:opacity-90 transition duration-200`}
+            className="w-full py-1.5 rounded text-xs font-medium text-center bg-teal-200 text-teal-800 hover:bg-teal-300 transition duration-200"
           >
             Predict Yes
           </button>
           <button
             onClick={() => onPlaceBet("no")}
-            className="w-full py-2 rounded-lg font-semibold bg-tag-politics dark:bg-gray-600 text-gray-800 dark:text-gray-200  dark:hover:bg-gray-500 transition duration-200"
+            className="w-full py-1.5 rounded text-xs font-medium text-center bg-blue-200 text-blue-800 hover:bg-blue-300 transition duration-200"
           >
             Predict No
           </button>
         </div>
 
         {/* Footer */}
-        <div className="my-5 flex items-center justify-between text-sm px-5">
-          <div className="flex items-center text-gray-500 dark:text-gray-400">
-            <Users size={16} className="mr-1" />
+        <div className="mt-2 flex items-center justify-between text-xs">
+          <div className="flex items-center text-gray-500">
+            <Users size={12} className="mr-1" />
             <span>Participants</span>
           </div>
           <button
             onClick={onViewDetails}
-            className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+            className="text-blue-600 hover:underline font-medium text-xs"
           >
             View Details
           </button>
