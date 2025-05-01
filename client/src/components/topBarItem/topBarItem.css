@@ -1,0 +1,33 @@
+.topbarbar-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--text-black);
+    transition: transform 0.3s, color 0.3s, background-color 0.3s;
+    border-radius: 5px;
+}
+
+.topbarbar-item:hover {
+    transform: scale(1.05);
+    -webkit-background-clip: text; 
+    background-clip: text;
+}
+.topbarbar-item.active {
+    border-bottom: 2px solid var(--color-secondary); 
+    color: var(--text-black);
+
+}
+.topbarbar-title {
+    margin-left: 15px;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.topbarbar-title {
+    margin-left: 10px; 
+}
+
+/* Active state styling */
+.topbarbar-item.active {
+    background-color: var();
+  }
