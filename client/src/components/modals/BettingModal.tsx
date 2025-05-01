@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { useWalletAdapter } from "@/lib/WalletAdapter";
+import { TransactionSuccessAlert } from "@/components/TransactionSuccessAlert";
 
 interface BettingModalProps {
   market: Market;
@@ -42,8 +43,8 @@ const BettingModal = ({
   const validateInput = () => {
     if (!isConnected) {
       toast({
-        title: "Lỗi",
-        description: "Vui lòng kết nối ví trước khi đặt cược",
+        title: "Error",
+        description: "Please connect your wallet before placing a bet",
         variant: "destructive",
       });
       return false;
@@ -52,8 +53,8 @@ const BettingModal = ({
     // Validate Market ID format
     if (!marketId.startsWith('0x') || marketId.length !== 66) {
       toast({
-        title: "Lỗi",
-        description: "Market ID không hợp lệ. ID phải bắt đầu bằng 0x và có độ dài 66 ký tự",
+        title: "Error",
+        description: "Invalid Market ID. ID must start with 0x and be 66 characters long",
         variant: "destructive",
       });
       return false;
@@ -61,8 +62,8 @@ const BettingModal = ({
 
     if (!amount || amount <= 0) {
       toast({
-        title: "Lỗi",
-        description: "Vui lòng nhập số tiền cược hợp lệ",
+        title: "Error",
+        description: "Please enter a valid bet amount",
         variant: "destructive",
       });
       return false;
@@ -70,8 +71,8 @@ const BettingModal = ({
 
     if (amount < market.minAmount) {
       toast({
-        title: "Lỗi",
-        description: `Số tiền cược phải lớn hơn hoặc bằng ${market.minAmount} SUI`,
+        title: "Error",
+        description: `Bet amount must be greater than or equal to ${market.minAmount} SUI`,
         variant: "destructive",
       });
       return false;
@@ -84,7 +85,6 @@ const BettingModal = ({
     if (!validateInput()) return;
 
     try {
-      // Use actual market ID from props or state
       const result = await placePrediction(
         marketId,
         selectedPrediction === "yes",
@@ -93,27 +93,19 @@ const BettingModal = ({
 
       if (result) {
         toast({
-          title: "Dự đoán thành công",
-          description: (
-            <a
-              href={`https://sui-explorer.com/tx/${result.digest}`}
-              target="_blank"
-              className="text-primary hover:underline"
-            >
-              Xem giao dịch
-            </a>
-          ),
+          title: "Prediction Successful",
+          description: <TransactionSuccessAlert digest={result.digest} />,
         });
         onClose();
       }
     } catch (error) {
       console.error("Betting error details:", error);
       toast({
-        title: "Lỗi",
+        title: "Error",
         description:
           error instanceof Error
-            ? `Đặt cược thất bại: ${error.message}`
-            : "Đặt cược thất bại. Vui lòng kiểm tra console để xem chi tiết.",
+            ? `Betting failed: ${error.message}`
+            : "Betting failed. Please check console for details.",
         variant: "destructive",
       });
     }
