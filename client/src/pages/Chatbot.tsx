@@ -15,10 +15,10 @@ const Chatbot = () => {
           <div className="p-4 sm:p-6 md:p-8">
             <div className="mb-8">
               <h1 className="text-2xl font-heading font-bold text-slate-900 mb-2">
-                Trợ lý AI
+                AI Assistant
               </h1>
               <p className="text-slate-600">
-                Đặt câu hỏi và nhận hỗ trợ về cách sử dụng nền tảng SocialPrediction.
+                Ask questions and get support on how to use the SocialPrediction platform.
               </p>
             </div>
 
@@ -29,7 +29,7 @@ const Chatbot = () => {
               
               <div className="space-y-6">
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                  <h3 className="text-lg font-medium text-slate-900 mb-4">Câu hỏi thường gặp</h3>
+                  <h3 className="text-lg font-medium text-slate-900 mb-4">Frequently Asked Questions</h3>
                   <ul className="space-y-3">
                     <li>
                       <button 
@@ -39,7 +39,7 @@ const Chatbot = () => {
                           console.log("FAQ clicked");
                         }}
                       >
-                        Làm thế nào để tạo dự đoán?
+                        How to create a prediction?
                       </button>
                     </li>
                     <li>
@@ -49,7 +49,7 @@ const Chatbot = () => {
                           console.log("FAQ clicked");
                         }}
                       >
-                        Cách kết nối ví Sui?
+                        How to connect Sui wallet?
                       </button>
                     </li>
                     <li>
@@ -59,7 +59,7 @@ const Chatbot = () => {
                           console.log("FAQ clicked");
                         }}
                       >
-                        Làm thế nào để tạo thị trường mới?
+                        How to create a new market?
                       </button>
                     </li>
                     <li>
@@ -69,31 +69,31 @@ const Chatbot = () => {
                           console.log("FAQ clicked");
                         }}
                       >
-                        Cách nhận phần thưởng từ dự đoán chính xác?
+                        How to receive rewards from accurate predictions?
                       </button>
                     </li>
                   </ul>
                 </div>
                 
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                  <h3 className="text-lg font-medium text-slate-900 mb-4">Tài nguyên hỗ trợ</h3>
+                  <h3 className="text-lg font-medium text-slate-900 mb-4">Support Resources</h3>
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
                       <i className="fas fa-book text-slate-400"></i>
                       <a href="#" className="text-sm text-primary-600 hover:text-primary-700">
-                        Hướng dẫn sử dụng
+                        User Guide
                       </a>
                     </li>
                     <li className="flex items-center gap-2">
                       <i className="fas fa-video text-slate-400"></i>
                       <a href="#" className="text-sm text-primary-600 hover:text-primary-700">
-                        Video hướng dẫn
+                        Tutorial Videos
                       </a>
                     </li>
                     <li className="flex items-center gap-2">
                       <i className="fas fa-question-circle text-slate-400"></i>
                       <a href="#" className="text-sm text-primary-600 hover:text-primary-700">
-                        Trung tâm hỗ trợ
+                        Support Center
                       </a>
                     </li>
                   </ul>
