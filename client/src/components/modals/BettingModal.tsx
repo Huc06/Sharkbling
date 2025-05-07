@@ -10,6 +10,7 @@ import { Market } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import { useWalletAdapter } from "@/lib/WalletAdapter";
 
 interface BettingModalProps {
   market: Market;
@@ -26,7 +27,9 @@ const BettingModal = ({
     initialBetType
   );
   const [amount, setAmount] = useState<number>(0);
+  const [marketId, setMarketId] = useState<string>("");
   const { placeBet, isPlacingBet } = useMarkets();
+  const { placePrediction, txResult, isConnected } = useWalletAdapter();
 
   const totalPool = market.yesPool + market.noPool;
   const yesOdds = totalPool / market.yesPool;
@@ -36,23 +39,83 @@ const BettingModal = ({
     amount > 0 ? amount * (selectedPrediction === "yes" ? yesOdds : noOdds) : 0;
   const calculateFee = () => calculatePayout() * (market.marketFee / 100);
 
-  const handlePlaceBet = async () => {
-    if (amount <= 0) return;
-    const result = await placeBet(market.id, selectedPrediction, amount);
-    if (result) {
+  const validateInput = () => {
+    if (!isConnected) {
       toast({
-        title: "Dự đoán thành công",
-        description: (
-          <a
-            href={`https://sui-explorer.com/tx/${result.id}`}
-            target="_blank"
-            className="text-primary hover:underline"
-          >
-            Xem giao dịch
-          </a>
-        ),
+        title: "Lỗi",
+        description: "Vui lòng kết nối ví trước khi đặt cược",
+        variant: "destructive",
       });
-      onClose();
+      return false;
+    }
+
+    // Validate Market ID format
+    if (!marketId.startsWith('0x') || marketId.length !== 66) {
+      toast({
+        title: "Lỗi",
+        description: "Market ID không hợp lệ. ID phải bắt đầu bằng 0x và có độ dài 66 ký tự",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (!amount || amount <= 0) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng nhập số tiền cược hợp lệ",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (amount < market.minAmount) {
+      toast({
+        title: "Lỗi",
+        description: `Số tiền cược phải lớn hơn hoặc bằng ${market.minAmount} SUI`,
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handlePlaceBet = async () => {
+    if (!validateInput()) return;
+
+    try {
+      // Use actual market ID from props or state
+      const result = await placePrediction(
+        marketId,
+        selectedPrediction === "yes",
+        amount
+      );
+
+      if (result) {
+        toast({
+          title: "Dự đoán thành công",
+          description: (
+            <a
+              href={`https://sui-explorer.com/tx/${result.digest}`}
+              target="_blank"
+              className="text-primary hover:underline"
+            >
+              Xem giao dịch
+            </a>
+          ),
+        });
+        onClose();
+      }
+    } catch (error) {
+      console.error("Betting error details:", error);
+      toast({
+        title: "Lỗi",
+        description:
+          error instanceof Error
+            ? `Đặt cược thất bại: ${error.message}`
+            : "Đặt cược thất bại. Vui lòng kiểm tra console để xem chi tiết.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -76,7 +139,9 @@ const BettingModal = ({
           <div className="grid grid-cols-2 gap-4">
             <Button
               className={`${
-                selectedPrediction === "yes" ? " button-betting-cus theme-secondary text-white border border-2" : "theme-primary-bg  border border-2"
+                selectedPrediction === "yes"
+                  ? " button-betting-cus theme-secondary text-white border border-2"
+                  : "theme-primary-bg  border border-2"
               } `}
               onClick={() => setSelectedPrediction("yes")}
             >
@@ -84,7 +149,9 @@ const BettingModal = ({
             </Button>
             <Button
               className={`${
-                selectedPrediction === "no" ? " button-betting-cus theme-secondary  text-white border border-2" : "theme-primary-bg border border-2"
+                selectedPrediction === "no"
+                  ? " button-betting-cus theme-secondary  text-white border border-2"
+                  : "theme-primary-bg border border-2"
               } `}
               onClick={() => setSelectedPrediction("no")}
             >
@@ -94,17 +161,37 @@ const BettingModal = ({
 
           <div>
             <label className="block text-sm font-medium text-[var(--color-text)] mb-1">
-              Amount (SUI)
+              Market ID
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter market ID"
+              value={marketId}
+              onChange={(e) => setMarketId(e.target.value)}
+              className="w-full p-2 border rounded-md text-[var(--color-text)]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[var(--color-text)] mb-1">
+              Amount (SUI) - Minimum: {market.minAmount} SUI
             </label>
             <div className="relative">
               <Input
                 type="number"
                 placeholder="0.00"
-                min={0}
+                min={market.minAmount}
                 value={amount || ""}
                 onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
-                className="w-full p-2 border rounded-md text-[var(--color-text)]"
+                className={`w-full p-2 border rounded-md text-[var(--color-text)] ${
+                  amount < market.minAmount ? "border-red-500" : ""
+                }`}
               />
+              {amount < market.minAmount && (
+                <p className="text-red-500 text-sm mt-1">
+                  Amount must be at least {market.minAmount} SUI
+                </p>
+              )}
             </div>
           </div>
 
