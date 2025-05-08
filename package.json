@@ -1,5 +1,5 @@
 {
-  "name": "rest-express",
+  "name": "sharksbling",
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build --outDir public",
     "start": "vite preview",
-    "check": "tsc"
+    "check": "tsc",
+    "vercel-build": "vite build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
