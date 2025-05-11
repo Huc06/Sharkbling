@@ -5,7 +5,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import axios from "axios";
 import { useSuiWallet } from "@/hooks/useSuiWallet";
-import { Wallet, MessageSquare } from "lucide-react";
+
 
 type Message = {
   id: string;
@@ -157,29 +157,6 @@ export default function ChatInterface() {
       };
       setMessages((prev) => [...prev, errorMessage]);
       return;
-    }
-
-    if (!isAuthenticated) {
-      try {
-        // Request authentication if not yet authenticated
-        const sig = await signMessage("Đăng nhập vào chatbot SharkBling");
-        if (!sig) {
-          const errorMessage: Message = {
-            id: Date.now().toString(),
-            content: "You need to authenticate your wallet to use the chatbot.",
-            sender: "bot",
-            timestamp: new Date(),
-          };
-          setMessages((prev) => [...prev, errorMessage]);
-          return;
-        }
-
-        console.log("Setting authenticated to true from send");
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error("Error during authentication in send:", error);
-        return;
-      }
     }
 
     // Add user message
