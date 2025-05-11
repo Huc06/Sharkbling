@@ -34,7 +34,7 @@ export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      content: "Hi I'm Sharkbing AI Assistant how i can help you today ?",
+      content: "Welcome to SUI AI Agent! 👋\nI can assist you with various DeFi and cryptocurrency activities:\n\n**Wallet Operations**\n• Wallet Management: View balances, assets, and holdings\n• Token Transfers: Send tokens or SUI to other addresses\n• Asset Overview: Check your complete portfolio\n\n**DeFi Activities**\n• Token Deployment: Create new tokens on Sui blockchain\n• Staking: Manage SUI token staking with validators\n• Liquidity Pools: Set up and manage token swap pools\n• Token Swapping: Execute trades between different pairs\n\n**Advanced Features**\n• Sui Name Service: Handle SNS domain registration\n• Suilend Integration: Manage LST staking and token operations",
       sender: "bot",
       timestamp: new Date(),
     },
@@ -276,70 +276,6 @@ export default function ChatInterface() {
       return <br key={index} />;
     });
   };
-
-// Show login screen if wallet is not connected
-
-if (!isConnected) {
-    return (
-      <div className="flex flex-col h-[600px] border rounded-xl overflow-hidden bg-white">
-        <div className="p-4 border-b bg-primary-500 text-white">
-          <h2 className="text-xl font-bold">SharkBling AI</h2>{" "}
-        </div>
-
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-            <Wallet className="w-8 h-8 text-slate-400" />
-          </div>
-          <h3 className="text-xl font-medium text-slate-900 mb-2">
-            Connect your wallet
-          </h3>
-          <p className="text-slate-600 mb-6 max-w-md">
-            You need to connect your Sui wallet to use the SharkBling chatbot.
-            Connecting your wallet gives you full access to the AI assistant’s
-            features.
-          </p>
-          <Button
-            onClick={openConnectWalletModal}
-            className="bg-primary-500 hover:bg-primary-600 text-white px-6"
-          >
-            <Wallet className="w-4 h-4 mr-2" />
-            Kết nối ví Sui
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Show authentication screen if wallet is connected but not authenticated
-  if (!isAuthenticated) {
-    return (
-      <div className="flex flex-col h-[600px] border rounded-xl overflow-hidden bg-white">
-        <div className="p-4 border-b bg-primary-500 text-white">
-          <h2 className="text-xl font-bold">SharkBling AI</h2>
-        </div>
-
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-            <MessageSquare className="w-8 h-8 text-slate-400" />
-          </div>
-          <h3 className="text-xl font-medium text-slate-900 mb-2">
-            → Authenticate your wallet
-          </h3>
-          <p className="text-slate-600 mb-6 max-w-md">
-            For security, you need to authenticate your Sui wallet by signing a
-            message. This helps us verify that you are the wallet owner.
-          </p>
-          <Button
-            onClick={handleAuthenticate}
-            className="bg-primary-500 hover:bg-primary-600 text-white px-6"
-          >
-            <MessageSquare className="w-4 h-4 mr-2" />
-            Sign message to authenticate{" "}
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   console.log("Rendering chat interface, authenticated:", isAuthenticated);
 
