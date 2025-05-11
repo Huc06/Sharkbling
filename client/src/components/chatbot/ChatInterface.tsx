@@ -34,7 +34,25 @@ export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      content: "Hi I'm Sharkbing AI Assistant how i can help you today ?",
+      content: `Welcome to SUI AI Agent! 👋
+I can assist you with various DeFi and cryptocurrency activities:
+
+Wallet Operations
+• Wallet Management: View balances, assets, and holdings
+• Token Transfers: Send tokens or SUI to other addresses
+• Asset Overview: Check your complete portfolio
+
+DeFi Activities
+• Token Deployment: Create new tokens on Sui blockchain
+• Staking: Manage SUI token staking with validators
+• Liquidity Pools: Set up and manage token swap pools
+• Token Swapping: Execute trades between different pairs
+
+Advanced Features
+• Sui Name Service: Handle SNS domain registration
+• Suilend Integration: Manage LST staking and token operations
+
+How can I help you today?`,
       sender: "bot",
       timestamp: new Date(),
     },
@@ -197,8 +215,7 @@ export default function ChatInterface() {
     try {
       // Call backend API
       const response = await axios.post(
-
-        "https://kind-flexibility-production.up.railway.app/v1/sui-agent/chat",
+       "https://kind-flexibility-production.up.railway.app/v1/sui-agent/chat",
         {
           message: input,
           walletAddress: walletAddress, // Thêm địa chỉ ví vào request
