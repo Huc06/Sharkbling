@@ -8,5 +8,7 @@
     "primary": "#0ea5e9",
     "border": "#27272a",
     "accent": "#22d3ee"
-  }
+  },
+  "primary": "#0ea5e9",
+  "radius": "0.5rem"
 }

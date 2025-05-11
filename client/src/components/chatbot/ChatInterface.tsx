@@ -197,7 +197,8 @@ export default function ChatInterface() {
     try {
       // Call backend API
       const response = await axios.post(
-        "http://localhost:5000/v1/sui-agent/chat",
+
+        "https://kind-flexibility-production.up.railway.app/v1/sui-agent/chat",
         {
           message: input,
           walletAddress: walletAddress, // Thêm địa chỉ ví vào request
